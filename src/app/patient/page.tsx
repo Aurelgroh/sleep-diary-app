@@ -61,7 +61,7 @@ export default async function PatientHome() {
       {/* Log sleep CTA */}
       {!hasLoggedToday && (
         <Link
-          href="/patient/diary"
+          href="/patient/diary/new"
           className="block bg-blue-600 text-white rounded-2xl p-6 hover:bg-blue-700 transition"
         >
           <div className="flex items-center justify-between">
