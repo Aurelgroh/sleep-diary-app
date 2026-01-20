@@ -1,15 +1,57 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
+type PatientOrInvite = {
+  id: string
+  name: string
+  email: string
+  status: string
+  current_session?: number
+  created_at: string
+  expires_at?: string
+  isInvitation?: boolean
+}
+
 export default async function PatientsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: patients } = await supabase
-    .from('patients')
-    .select('*')
-    .eq('therapist_id', user!.id)
-    .order('created_at', { ascending: false })
+  const [patientsResult, invitationsResult] = await Promise.all([
+    supabase
+      .from('patients')
+      .select('*')
+      .eq('therapist_id', user!.id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('invitations')
+      .select('*')
+      .eq('therapist_id', user!.id)
+      .order('created_at', { ascending: false }),
+  ])
+
+  const patients = patientsResult.data || []
+  const invitations = invitationsResult.data || []
+
+  const allItems: PatientOrInvite[] = [
+    ...invitations.map((inv) => ({
+      id: inv.id,
+      name: inv.name,
+      email: inv.email,
+      status: 'pending',
+      created_at: inv.created_at,
+      expires_at: inv.expires_at,
+      isInvitation: true,
+    })),
+    ...patients.map((p) => ({
+      id: p.id,
+      name: p.name,
+      email: p.email,
+      status: p.status,
+      current_session: p.current_session,
+      created_at: p.created_at,
+      isInvitation: false,
+    })),
+  ]
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -29,7 +71,7 @@ export default async function PatientsPage() {
         </Link>
       </div>
 
-      {!patients || patients.length === 0 ? (
+      {allItems.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,35 +99,50 @@ export default async function PatientsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {patients.map((patient) => (
-                <tr key={patient.id} className="hover:bg-slate-50">
+              {allItems.map((item) => (
+                <tr key={item.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4">
-                    <p className="font-medium text-slate-900">{patient.name}</p>
-                    <p className="text-sm text-slate-500">{patient.email}</p>
+                    <p className="font-medium text-slate-900">{item.name}</p>
+                    <p className="text-sm text-slate-500">{item.email}</p>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      patient.status === 'invited'
-                        ? 'bg-slate-100 text-slate-800'
-                        : patient.status === 'baseline'
+                      item.status === 'pending'
+                        ? 'bg-purple-100 text-purple-800'
+                        : item.status === 'baseline'
                         ? 'bg-amber-100 text-amber-800'
-                        : patient.status === 'active'
+                        : item.status === 'active'
                         ? 'bg-green-100 text-green-800'
+                        : item.status === 'completed'
+                        ? 'bg-blue-100 text-blue-800'
                         : 'bg-slate-100 text-slate-800'
                     }`}>
-                      {patient.status}
+                      {item.status}
                     </span>
+                    {item.isInvitation && item.expires_at && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        Expires {new Date(item.expires_at).toLocaleDateString()}
+                      </p>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-slate-600">
-                    {patient.current_session === 0 ? 'Baseline' : `Session ${patient.current_session}`}
+                    {item.isInvitation
+                      ? '—'
+                      : item.current_session === 0
+                        ? 'Baseline'
+                        : `Session ${item.current_session}`}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/therapist/patients/${patient.id}`}
-                      className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-                    >
-                      View
-                    </Link>
+                    {item.isInvitation ? (
+                      <span className="text-slate-400 text-sm">Awaiting signup</span>
+                    ) : (
+                      <Link
+                        href={`/therapist/patients/${item.id}`}
+                        className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                      >
+                        View
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}

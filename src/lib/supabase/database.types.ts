@@ -118,6 +118,44 @@ export type Database = {
           },
         ]
       }
+      invitations: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          name: string
+          therapist_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          name: string
+          therapist_id: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          name?: string
+          therapist_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_therapist_id_fkey"
+            columns: ["therapist_id"]
+            isOneToOne: false
+            referencedRelation: "therapists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       isi_scores: {
         Row: {
           answers: Json
@@ -173,8 +211,6 @@ export type Database = {
           current_session: number
           email: string
           id: string
-          invitation_token: string | null
-          invited_at: string | null
           min_sleep_window: number
           name: string
           status: Database["public"]["Enums"]["patient_status"]
@@ -188,8 +224,6 @@ export type Database = {
           current_session?: number
           email: string
           id: string
-          invitation_token?: string | null
-          invited_at?: string | null
           min_sleep_window?: number
           name: string
           status?: Database["public"]["Enums"]["patient_status"]
@@ -203,8 +237,6 @@ export type Database = {
           current_session?: number
           email?: string
           id?: string
-          invitation_token?: string | null
-          invited_at?: string | null
           min_sleep_window?: number
           name?: string
           status?: Database["public"]["Enums"]["patient_status"]
