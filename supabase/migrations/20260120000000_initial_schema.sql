@@ -1,8 +1,8 @@
 -- SleepDiary Initial Schema
 -- Based on PRD v1.1
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable pgcrypto for gen_random_uuid() if not already available
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================
 -- ENUM Types
@@ -96,7 +96,7 @@ CREATE POLICY "Patients can update own profile"
 -- ============================================
 
 CREATE TABLE prescriptions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
   bedtime TIME NOT NULL,  -- e.g., '23:30:00'
   wake_time TIME NOT NULL,  -- e.g., '05:00:00'
@@ -132,7 +132,7 @@ CREATE POLICY "Patients can view their prescriptions"
 -- ============================================
 
 CREATE TABLE diary_entries (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
   date DATE NOT NULL,  -- The night being logged (sleep date)
 
@@ -206,7 +206,7 @@ CREATE POLICY "Therapists can view and insert entries for their patients"
 -- ============================================
 
 CREATE TABLE sessions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
   therapist_id UUID NOT NULL REFERENCES therapists(id),
   session_number INTEGER NOT NULL CHECK (session_number >= 1 AND session_number <= 10),
@@ -260,7 +260,7 @@ CREATE POLICY "Patients can view their sessions"
 -- ============================================
 
 CREATE TABLE isi_scores (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
   session_id UUID REFERENCES sessions(id),  -- NULL for intake
   date DATE NOT NULL,
