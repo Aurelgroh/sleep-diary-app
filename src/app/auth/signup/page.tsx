@@ -22,6 +22,7 @@ export default function SignupPage() {
     setError(null)
 
     // Sign up with Supabase Auth
+    // The therapist profile is created automatically via database trigger
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -30,6 +31,7 @@ export default function SignupPage() {
         data: {
           name,
           role: 'therapist',
+          credentials: credentials || null,
         },
       },
     })
@@ -42,20 +44,6 @@ export default function SignupPage() {
 
     if (!authData.user) {
       setError('Failed to create account')
-      setLoading(false)
-      return
-    }
-
-    // Create therapist profile
-    const { error: profileError } = await supabase.from('therapists').insert({
-      id: authData.user.id,
-      email,
-      name,
-      credentials: credentials || null,
-    })
-
-    if (profileError) {
-      setError(profileError.message)
       setLoading(false)
       return
     }
