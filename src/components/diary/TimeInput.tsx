@@ -7,6 +7,7 @@ interface TimeInputProps {
   onChange: (value: string) => void
   label?: string
   error?: string
+  defaultTime?: string // Format: "HH:MM" (24-hour)
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
@@ -133,31 +134,51 @@ function WheelPicker({ items, selectedValue, onSelect, itemHeight = 44 }: WheelP
   )
 }
 
-export function TimeInput({ value, onChange, label, error }: TimeInputProps) {
-  const [selectedHour, setSelectedHour] = useState<number | null>(null)
-  const [selectedMinute, setSelectedMinute] = useState<number | null>(null)
-
-  // Parse initial value
-  useEffect(() => {
+export function TimeInput({ value, onChange, label, error, defaultTime }: TimeInputProps) {
+  // Initialize with question-specific default or fallback to 10 PM
+  const getInitialHour = () => {
     if (value) {
-      const [h, m] = value.split(':').map(Number)
-      setSelectedHour(h)
-      setSelectedMinute(m)
+      return parseInt(value.split(':')[0], 10)
     }
-  }, [])
+    if (defaultTime) {
+      return parseInt(defaultTime.split(':')[0], 10)
+    }
+    return 22 // Fallback to 10 PM
+  }
+
+  const getInitialMinute = () => {
+    if (value) {
+      return parseInt(value.split(':')[1], 10)
+    }
+    if (defaultTime) {
+      return parseInt(defaultTime.split(':')[1], 10)
+    }
+    return 0 // Fallback to :00
+  }
+
+  const [selectedHour, setSelectedHour] = useState<number>(getInitialHour)
+  const [selectedMinute, setSelectedMinute] = useState<number>(getInitialMinute)
+  const [hasInteracted, setHasInteracted] = useState(!!value)
+
+  // Call onChange on mount with default values so form knows a value is set
+  useEffect(() => {
+    if (!value) {
+      const defaultHour = getInitialHour()
+      const defaultMinute = getInitialMinute()
+      onChange(`${defaultHour.toString().padStart(2, '0')}:${defaultMinute.toString().padStart(2, '0')}`)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleHourSelect = (hour: number) => {
     setSelectedHour(hour)
-    if (selectedMinute !== null) {
-      onChange(`${hour.toString().padStart(2, '0')}:${formatMinute(selectedMinute)}`)
-    }
+    setHasInteracted(true)
+    onChange(`${hour.toString().padStart(2, '0')}:${formatMinute(selectedMinute)}`)
   }
 
   const handleMinuteSelect = (minute: number) => {
     setSelectedMinute(minute)
-    if (selectedHour !== null) {
-      onChange(`${selectedHour.toString().padStart(2, '0')}:${formatMinute(minute)}`)
-    }
+    setHasInteracted(true)
+    onChange(`${selectedHour.toString().padStart(2, '0')}:${formatMinute(minute)}`)
   }
 
   const hourItems = HOURS.map(h => ({
@@ -203,13 +224,14 @@ export function TimeInput({ value, onChange, label, error }: TimeInputProps) {
       </div>
 
       {/* Display selected time */}
-      {selectedHour !== null && selectedMinute !== null && (
-        <div className="text-center py-3 bg-blue-50 rounded-xl border border-blue-200">
-          <span className="text-2xl font-bold text-blue-600">
-            {formatHour12(selectedHour)}:{formatMinute(selectedMinute)} {getAmPm(selectedHour)}
-          </span>
-        </div>
-      )}
+      <div className="text-center py-3 bg-blue-50 rounded-xl border border-blue-200">
+        <span className="text-2xl font-bold text-blue-600">
+          {formatHour12(selectedHour)}:{formatMinute(selectedMinute)} {getAmPm(selectedHour)}
+        </span>
+        {!hasInteracted && (
+          <p className="text-xs text-slate-500 mt-1">Scroll to select your time</p>
+        )}
+      </div>
 
       {error && (
         <p className="text-sm text-red-600">{error}</p>

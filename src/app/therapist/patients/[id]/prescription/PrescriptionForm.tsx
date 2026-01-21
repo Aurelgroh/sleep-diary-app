@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -12,7 +12,7 @@ import {
   calculateWindowMinutes,
   DEFAULT_MIN_WINDOW
 } from '@/lib/sleep-diary/titration'
-import { formatSE, getSEColorClass } from '@/lib/sleep-diary/metrics'
+import { formatSE, getSEColorClass, formatDurationHM } from '@/lib/sleep-diary/metrics'
 
 interface PrescriptionFormProps {
   patientId: string
@@ -22,6 +22,15 @@ interface PrescriptionFormProps {
   prescriptionHistory: Prescription[]
   weeklyAvgSE: number | null
   daysLogged: number
+}
+
+interface PrescriptionWeekData {
+  avgSe: number | null
+  avgTst: number | null
+  avgTib: number | null
+  daysLogged: number
+  startDate: string
+  endDate: string
 }
 
 export function PrescriptionForm({
@@ -48,6 +57,75 @@ export function PrescriptionForm({
   const [notes, setNotes] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Prescription history expansion state
+  const [expandedPrescription, setExpandedPrescription] = useState<string | null>(null)
+  const [weekData, setWeekData] = useState<Record<string, PrescriptionWeekData>>({})
+  const [loadingWeekData, setLoadingWeekData] = useState<string | null>(null)
+
+  // Fetch week data for a prescription period
+  const fetchWeekData = async (prescriptionId: string, startDate: string, endDate: string) => {
+    if (weekData[prescriptionId]) return // Already loaded
+
+    setLoadingWeekData(prescriptionId)
+    try {
+      const { data: entries } = await supabase
+        .from('diary_entries')
+        .select('se, tst, tib')
+        .eq('patient_id', patientId)
+        .gte('date', startDate)
+        .lte('date', endDate)
+
+      if (entries && entries.length > 0) {
+        const avgSe = entries.reduce((sum, e) => sum + (e.se || 0), 0) / entries.length
+        const avgTst = entries.reduce((sum, e) => sum + (e.tst || 0), 0) / entries.length
+        const avgTib = entries.reduce((sum, e) => sum + (e.tib || 0), 0) / entries.length
+
+        setWeekData(prev => ({
+          ...prev,
+          [prescriptionId]: {
+            avgSe: Math.round(avgSe * 10) / 10,
+            avgTst: Math.round(avgTst),
+            avgTib: Math.round(avgTib),
+            daysLogged: entries.length,
+            startDate,
+            endDate
+          }
+        }))
+      } else {
+        setWeekData(prev => ({
+          ...prev,
+          [prescriptionId]: {
+            avgSe: null,
+            avgTst: null,
+            avgTib: null,
+            daysLogged: 0,
+            startDate,
+            endDate
+          }
+        }))
+      }
+    } finally {
+      setLoadingWeekData(null)
+    }
+  }
+
+  // Toggle prescription expansion
+  const togglePrescription = (rx: Prescription, index: number) => {
+    const id = rx.id
+    if (expandedPrescription === id) {
+      setExpandedPrescription(null)
+    } else {
+      setExpandedPrescription(id)
+      // Calculate date range for this prescription
+      const startDate = rx.effective_date
+      const nextRx = prescriptionHistory[index - 1] // Previous in array = next chronologically
+      const endDate = nextRx
+        ? new Date(new Date(nextRx.effective_date).getTime() - 86400000).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0]
+      fetchWeekData(id, startDate, endDate)
+    }
+  }
 
   const windowMinutes = calculateWindowMinutes(bedtime, wakeTime)
   const windowHours = windowMinutes / 60
@@ -321,31 +399,101 @@ export function PrescriptionForm({
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="p-6 border-b border-slate-200">
             <h2 className="font-semibold text-slate-900">Prescription History</h2>
+            <p className="text-sm text-slate-500">Click to view sleep data for each period</p>
           </div>
           <div className="divide-y divide-slate-200">
-            {prescriptionHistory.map((rx, index) => (
-              <div key={rx.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-slate-900">
-                    {formatPrescriptionTime(rx.bedtime)} → {formatPrescriptionTime(rx.wake_time)}
-                  </p>
-                  <p className="text-sm text-slate-500">
-                    {Math.round(rx.window_minutes / 60 * 10) / 10} hours
-                  </p>
-                  {rx.notes && (
-                    <p className="text-sm text-slate-400 mt-1">{rx.notes}</p>
+            {prescriptionHistory.map((rx, index) => {
+              const isExpanded = expandedPrescription === rx.id
+              const data = weekData[rx.id]
+              const isLoading = loadingWeekData === rx.id
+
+              return (
+                <div key={rx.id} className="overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => togglePrescription(rx, index)}
+                    className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <div>
+                        <p className="font-medium text-slate-900">
+                          {formatPrescriptionTime(rx.bedtime)} → {formatPrescriptionTime(rx.wake_time)}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          {Math.round(rx.window_minutes / 60 * 10) / 10} hours
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-slate-600">
+                        {new Date(rx.effective_date).toLocaleDateString()}
+                      </p>
+                      {index === 0 && (
+                        <span className="text-xs text-green-600 font-medium">Current</span>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Expanded Sleep Data */}
+                  {isExpanded && (
+                    <div className="px-4 pb-4 pt-0 bg-slate-50 border-t border-slate-100">
+                      {isLoading ? (
+                        <div className="py-4 text-center">
+                          <div className="animate-pulse text-slate-400">Loading sleep data...</div>
+                        </div>
+                      ) : data ? (
+                        <div className="pt-3">
+                          <p className="text-xs text-slate-500 mb-3">
+                            Sleep data from {new Date(data.startDate).toLocaleDateString()} to {new Date(data.endDate).toLocaleDateString()}
+                          </p>
+                          {data.daysLogged > 0 ? (
+                            <div className="grid grid-cols-4 gap-3">
+                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
+                                <p className="text-xs text-slate-500">Avg SE</p>
+                                <p className={`text-lg font-bold ${getSEColorClass(data.avgSe)}`}>
+                                  {data.avgSe !== null ? `${Math.round(data.avgSe)}%` : '--'}
+                                </p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
+                                <p className="text-xs text-slate-500">Avg TST</p>
+                                <p className="text-lg font-bold text-slate-900">
+                                  {data.avgTst !== null ? formatDurationHM(data.avgTst) : '--'}
+                                </p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
+                                <p className="text-xs text-slate-500">Avg TIB</p>
+                                <p className="text-lg font-bold text-slate-900">
+                                  {data.avgTib !== null ? formatDurationHM(data.avgTib) : '--'}
+                                </p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
+                                <p className="text-xs text-slate-500">Days</p>
+                                <p className="text-lg font-bold text-slate-900">{data.daysLogged}</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-400 py-2">No diary entries for this period</p>
+                          )}
+                          {rx.notes && (
+                            <p className="text-sm text-slate-500 mt-3 pt-3 border-t border-slate-200">
+                              <span className="font-medium">Notes:</span> {rx.notes}
+                            </p>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
                   )}
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-slate-600">
-                    {new Date(rx.effective_date).toLocaleDateString()}
-                  </p>
-                  {index === 0 && (
-                    <span className="text-xs text-green-600 font-medium">Current</span>
-                  )}
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       )}

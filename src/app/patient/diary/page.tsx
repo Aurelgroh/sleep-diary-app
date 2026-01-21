@@ -32,12 +32,6 @@ function formatDuration(minutes: number): string {
   return `${hours}h ${mins}m`
 }
 
-function getSleepEfficiencyColor(se: number): string {
-  if (se >= 85) return 'text-green-600'
-  if (se >= 70) return 'text-amber-600'
-  return 'text-red-600'
-}
-
 function getQualityEmoji(rating: number | null): string {
   if (!rating) return '-'
   const emojis: Record<number, string> = {
@@ -130,17 +124,19 @@ export default async function DiaryHistoryPage({
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <p className="text-2xl font-bold text-slate-900">{entries.length}</p>
-            <p className="text-xs text-slate-500">Entries</p>
+            <p className="text-xs text-slate-500">Total Entries</p>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
             <p className="text-2xl font-bold text-slate-900">{streak}</p>
             <p className="text-xs text-slate-500">Day Streak</p>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-            <p className={`text-2xl font-bold ${getSleepEfficiencyColor(entries[0]?.se || 0)}`}>
-              {entries[0]?.se ? `${Math.round(entries[0].se)}%` : '--'}
+            <p className="text-2xl font-bold text-slate-900">
+              {entries.slice(0, 7).reduce((sum, e) => sum + (e.tst || 0), 0) > 0
+                ? formatDuration(Math.round(entries.slice(0, 7).reduce((sum, e) => sum + (e.tst || 0), 0) / Math.min(entries.length, 7)))
+                : '--'}
             </p>
-            <p className="text-xs text-slate-500">Last SE</p>
+            <p className="text-xs text-slate-500">Avg Sleep</p>
           </div>
         </div>
       )}
@@ -163,24 +159,18 @@ export default async function DiaryHistoryPage({
                 <span className="text-2xl">{getQualityEmoji(entry.quality_rating)}</span>
               </div>
 
-              <div className="grid grid-cols-4 gap-2 text-center">
+              <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">TIB</p>
-                  <p className="font-medium text-sm">{entry.tib ? formatDuration(entry.tib) : '--'}</p>
+                  <p className="text-xs text-slate-500">Time in Bed</p>
+                  <p className="font-medium text-sm text-slate-900">{entry.tib ? formatDuration(entry.tib) : '--'}</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">TST</p>
-                  <p className="font-medium text-sm">{entry.tst ? formatDuration(entry.tst) : '--'}</p>
+                  <p className="text-xs text-slate-500">Total Sleep</p>
+                  <p className="font-medium text-sm text-slate-900">{entry.tst ? formatDuration(entry.tst) : '--'}</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">TWT</p>
-                  <p className="font-medium text-sm">{entry.twt ? formatDuration(entry.twt) : '--'}</p>
-                </div>
-                <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">SE</p>
-                  <p className={`font-medium text-sm ${getSleepEfficiencyColor(entry.se || 0)}`}>
-                    {entry.se ? `${Math.round(entry.se)}%` : '--'}
-                  </p>
+                  <p className="text-xs text-slate-500">Time Awake</p>
+                  <p className="font-medium text-sm text-slate-900">{entry.twt ? formatDuration(entry.twt) : '--'}</p>
                 </div>
               </div>
             </div>

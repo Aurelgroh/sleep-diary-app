@@ -17,13 +17,16 @@ export function DurationInput({ value, onChange, label, error, minValue = 0 }: D
   const [hours, setHours] = useState(0)
   const [minutes, setMinutes] = useState(0)
 
-  // Parse initial value
+  // Parse initial value and trigger onChange with default
   useEffect(() => {
     if (value !== undefined) {
       setHours(Math.floor(value / 60))
       setMinutes(value % 60)
+    } else {
+      // Trigger onChange with default value (0) so form knows a value is set
+      onChange(0)
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleHourSelect = (h: number) => {
     setHours(h)

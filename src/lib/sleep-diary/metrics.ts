@@ -13,6 +13,7 @@ export interface DiaryEntry {
   waso: number | null // Wake After Sleep Onset (minutes)
   ema: number | null  // Early Morning Awakening (minutes)
   twt: number | null  // Total Wake Time (minutes)
+  awakenings: number | null // Number of awakenings
   quality_rating: number | null
   ttb: string | null  // Time to Bed (ISO)
   tts: string | null  // Time to Sleep (ISO)

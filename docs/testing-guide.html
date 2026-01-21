@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SleepDiary Testing Guide - Phases 1-4</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      color: #1e293b;
+    }
+    h1 {
+      color: #0f172a;
+      border-bottom: 3px solid #3b82f6;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #1e40af;
+      margin-top: 40px;
+      border-left: 4px solid #3b82f6;
+      padding-left: 12px;
+    }
+    h3 {
+      color: #334155;
+      margin-top: 24px;
+    }
+    a {
+      color: #2563eb;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+    .box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .box.info {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .box.warning {
+      background: #fefce8;
+      border-color: #fef08a;
+    }
+    .box.success {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .credentials {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .credentials strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+    }
+    .step {
+      counter-increment: step;
+      position: relative;
+      padding-left: 40px;
+      margin: 20px 0;
+    }
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+    .checklist li {
+      padding: 8px 0 8px 28px;
+      position: relative;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      font-size: 18px;
+    }
+    @media print {
+      body {
+        padding: 20px;
+      }
+      h2 {
+        page-break-before: auto;
+      }
+      .box, pre {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>SleepDiary Testing Guide</h1>
+  <p><strong>Version:</strong> Phases 1-4 Complete<br>
+  <strong>Date:</strong> January 2026<br>
+  <strong>Repository:</strong> <a href="https://github.com/Aurelgroh/sleep-diary-app" target="_blank">github.com/Aurelgroh/sleep-diary-app</a></p>
+
+  <div class="box info">
+    <strong>What's Been Built</strong>
+    <ul>
+      <li><strong>Phase 1:</strong> Authentication & Role Routing</li>
+      <li><strong>Phase 2:</strong> Patient Invitation Flow</li>
+      <li><strong>Phase 3:</strong> Sleep Diary Entry Form</li>
+      <li><strong>Phase 4:</strong> Therapist Dashboard & Prescriptions</li>
+    </ul>
+  </div>
+
+  <h2>Prerequisites</h2>
+
+  <div class="box warning">
+    <strong>Important: Links in this document</strong>
+    <ul>
+      <li><strong>localhost links</strong> (http://localhost:3000/...) - Only work when the dev server is running. Start the server first!</li>
+      <li><strong>Supabase links</strong> - Require you to be logged into Supabase</li>
+      <li><strong>GitHub links</strong> - Work directly in any browser</li>
+    </ul>
+  </div>
+
+  <h3>1. Start the Development Server</h3>
+  <pre><code>cd /Users/aurelgroh/SleepDiary/sleep-diary-app
+npm run dev</code></pre>
+  <p>The app will be available at: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+  <p><em>Wait until you see "Ready" in the terminal before clicking localhost links.</em></p>
+
+  <h3>2. Supabase Dashboard Access</h3>
+  <p>You'll need access to confirm test user emails:</p>
+  <p><a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz/auth/users" target="_blank">Supabase Auth Users Dashboard</a> (requires Supabase login)</p>
+
+  <h2>Test Accounts</h2>
+
+  <div class="credentials">
+    <strong>Test Patient (Already Confirmed)</strong>
+    Email: <code>diarytest@sleepdiaryapp.test</code><br>
+    Password: <code>testpassword123</code><br>
+    Status: Has 7 days of seeded diary data
+  </div>
+
+  <div class="credentials">
+    <strong>Test Therapist (Needs Email Confirmation)</strong>
+    Email: <code>testtherapist@sleepdiaryapp.test</code><br>
+    Password: <code>testpassword123</code><br>
+    Status: Created but needs email confirmation in Supabase
+  </div>
+
+  <h2>Phase 1: Authentication & Role Routing</h2>
+
+  <h3>Test Cases</h3>
+  <div style="counter-reset: step;">
+    <div class="step">
+      <strong>Home Page</strong><br>
+      Visit <a href="http://localhost:3000" target="_blank">http://localhost:3000</a><br>
+      <em>Expected:</em> Landing page with "Sign in" and "Register as Therapist" buttons
+    </div>
+
+    <div class="step">
+      <strong>Login Page</strong><br>
+      Visit <a href="http://localhost:3000/auth/login" target="_blank">http://localhost:3000/auth/login</a><br>
+      <em>Expected:</em> Login form with email, password, "Sign in" and "Send magic link" buttons
+    </div>
+
+    <div class="step">
+      <strong>Signup Page</strong><br>
+      Visit <a href="http://localhost:3000/auth/signup" target="_blank">http://localhost:3000/auth/signup</a><br>
+      <em>Expected:</em> Registration form for therapists with name, email, credentials, password
+    </div>
+
+    <div class="step">
+      <strong>Patient Login & Redirect</strong><br>
+      Sign in with patient credentials<br>
+      <em>Expected:</em> Redirects to <code>/patient</code> dashboard
+    </div>
+
+    <div class="step">
+      <strong>Therapist Login & Redirect</strong><br>
+      Sign in with therapist credentials (after confirming email)<br>
+      <em>Expected:</em> Redirects to <code>/therapist</code> dashboard
+    </div>
+  </div>
+
+  <h3>Checklist</h3>
+  <ul class="checklist">
+    <li>Home page renders correctly</li>
+    <li>Login form works</li>
+    <li>Signup creates new therapist account</li>
+    <li>Patients redirect to /patient</li>
+    <li>Therapists redirect to /therapist</li>
+    <li>Sign out works</li>
+  </ul>
+
+  <h2>Phase 2: Patient Invitation Flow</h2>
+
+  <div class="box warning">
+    <strong>Note:</strong> You need a confirmed therapist account to test this phase.
+  </div>
+
+  <h3>Test Cases</h3>
+  <div style="counter-reset: step;">
+    <div class="step">
+      <strong>Therapist Patients List</strong><br>
+      Sign in as therapist, visit <a href="http://localhost:3000/therapist/patients" target="_blank">http://localhost:3000/therapist/patients</a><br>
+      <em>Expected:</em> Patient list with "Invite Patient" button
+    </div>
+
+    <div class="step">
+      <strong>Invite Patient Form</strong><br>
+      Click "Invite Patient" button<br>
+      Visit <a href="http://localhost:3000/therapist/patients/invite" target="_blank">http://localhost:3000/therapist/patients/invite</a><br>
+      <em>Expected:</em> Form with patient name and email fields
+    </div>
+
+    <div class="step">
+      <strong>Create Invitation</strong><br>
+      Submit invitation form with test data<br>
+      <em>Expected:</em> Success message, invitation appears in patients list as "pending"
+    </div>
+
+    <div class="step">
+      <strong>Patient Signup via Invite Link</strong><br>
+      Copy invite link from patients list or construct: <code>/invite?token=&lt;TOKEN&gt;</code><br>
+      <em>Expected:</em> Patient signup form pre-filled with name/email
+    </div>
+  </div>
+
+  <h3>Checklist</h3>
+  <ul class="checklist">
+    <li>Invite form accessible to therapists</li>
+    <li>Invitation creates pending record</li>
+    <li>Invite link works for patient signup</li>
+    <li>Patient linked to therapist after signup</li>
+  </ul>
+
+  <h2>Phase 3: Sleep Diary Entry</h2>
+
+  <h3>Test Cases</h3>
+  <div style="counter-reset: step;">
+    <div class="step">
+      <strong>Patient Dashboard</strong><br>
+      Sign in as patient, visit <a href="http://localhost:3000/patient" target="_blank">http://localhost:3000/patient</a><br>
+      <em>Expected:</em> Dashboard showing sleep window, this week's stats, treatment status
+    </div>
+
+    <div class="step">
+      <strong>New Diary Entry</strong><br>
+      Visit <a href="http://localhost:3000/patient/diary/new" target="_blank">http://localhost:3000/patient/diary/new</a><br>
+      <em>Expected:</em> Multi-step questionnaire with progress bar
+    </div>
+
+    <div class="step">
+      <strong>Conditional Questions</strong><br>
+      Answer "Yes" to "Did you fall asleep within 5 minutes?"<br>
+      <em>Expected:</em> SOL questions are skipped (question count changes)
+    </div>
+
+    <div class="step">
+      <strong>Time Input Wheel Picker</strong><br>
+      Test time selection questions<br>
+      <em>Expected:</em> Scrollable wheel picker with AM/PM display
+    </div>
+
+    <div class="step">
+      <strong>Summary & Submit</strong><br>
+      Complete all questions<br>
+      <em>Expected:</em> Summary screen with calculated metrics (TIB, TST, TWT, SE%)
+    </div>
+
+    <div class="step">
+      <strong>Diary History</strong><br>
+      Visit <a href="http://localhost:3000/patient/diary" target="_blank">http://localhost:3000/patient/diary</a><br>
+      <em>Expected:</em> List of past diary entries with metrics
+    </div>
+  </div>
+
+  <h3>Question Flow</h3>
+  <table>
+    <tr>
+      <th>Category</th>
+      <th>Questions</th>
+      <th>Conditional</th>
+    </tr>
+    <tr>
+      <td>Going to Bed</td>
+      <td>Q1: Bedtime, Q2: Sleep attempt time, Q3: Fell asleep quickly?, Q4-5: SOL details</td>
+      <td>Q4-5 show if Q3 = No</td>
+    </tr>
+    <tr>
+      <td>Middle of Night</td>
+      <td>Q6: Awakenings count, Q7-8: WASO details</td>
+      <td>Q7-8 show if Q6 > 0</td>
+    </tr>
+    <tr>
+      <td>Waking Up</td>
+      <td>Q9: Final wake time, Q10: Woke early?, Q11-12: EMA details, Q13: Out of bed time, Q14: Quality</td>
+      <td>Q11-12 show if Q10 = Yes</td>
+    </tr>
+  </table>
+
+  <h3>Checklist</h3>
+  <ul class="checklist">
+    <li>Diary form loads with progress bar</li>
+    <li>Time wheel picker works smoothly</li>
+    <li>Conditional questions show/hide correctly</li>
+    <li>Duration inputs accept valid values</li>
+    <li>Summary shows correct calculations</li>
+    <li>Entry saves to database</li>
+    <li>Diary history displays entries</li>
+  </ul>
+
+  <h2>Phase 4: Therapist Dashboard & Prescriptions</h2>
+
+  <div class="box warning">
+    <strong>Setup Required:</strong>
+    <ol>
+      <li>Confirm therapist email in <a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz/auth/users" target="_blank">Supabase Dashboard</a></li>
+      <li>Link patient to therapist (update <code>patients.therapist_id</code> in <a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz/editor" target="_blank">SQL Editor</a>)</li>
+    </ol>
+  </div>
+
+  <h3>Linking Patient to Therapist (SQL)</h3>
+  <pre><code>-- Run in Supabase SQL Editor
+-- First, get the therapist's user ID from auth.users
+
+-- Then update the patient
+UPDATE patients
+SET therapist_id = 'YOUR_THERAPIST_UUID'
+WHERE email = 'diarytest@sleepdiaryapp.test';</code></pre>
+
+  <h3>Test Cases</h3>
+  <div style="counter-reset: step;">
+    <div class="step">
+      <strong>Therapist Dashboard</strong><br>
+      Sign in as therapist, visit <a href="http://localhost:3000/therapist" target="_blank">http://localhost:3000/therapist</a><br>
+      <em>Expected:</em> Therapist home with navigation
+    </div>
+
+    <div class="step">
+      <strong>Patient List</strong><br>
+      Visit <a href="http://localhost:3000/therapist/patients" target="_blank">http://localhost:3000/therapist/patients</a><br>
+      <em>Expected:</em> Table with patient name, status, session number, "View" link
+    </div>
+
+    <div class="step">
+      <strong>Patient Detail Dashboard</strong><br>
+      Click "View" on a patient<br>
+      <em>Expected:</em>
+      <ul>
+        <li>Patient header with name, status, days in treatment</li>
+        <li>Current prescription display</li>
+        <li>Titration recommendation panel</li>
+        <li>Three weekly summary cards (This Week / Last Week / Baseline)</li>
+        <li>Diary entries table</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <strong>Weekly Metrics</strong><br>
+      Check the summary cards<br>
+      <em>Expected:</em> Average TST, TIB, SE, SOL, WASO with comparison arrows
+    </div>
+
+    <div class="step">
+      <strong>Titration Recommendation</strong><br>
+      With 7 days of data at ~91% SE<br>
+      <em>Expected:</em> "Increase Window" recommendation (SE ≥ 90%)
+    </div>
+
+    <div class="step">
+      <strong>Prescription Management</strong><br>
+      Click "Set Prescription" or "Adjust Prescription"<br>
+      Visit <code>/therapist/patients/[id]/prescription</code><br>
+      <em>Expected:</em>
+      <ul>
+        <li>Current week's SE data</li>
+        <li>Recommendation with "Apply" button</li>
+        <li>Time pickers for bedtime/wake time</li>
+        <li>Window duration calculator</li>
+        <li>Save button</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <strong>Save Prescription</strong><br>
+      Set bedtime to 11:00 PM, wake time to 6:00 AM<br>
+      <em>Expected:</em> Prescription saved, shows in patient dashboard
+    </div>
+  </div>
+
+  <h3>Titration Thresholds</h3>
+  <table>
+    <tr>
+      <th>SE Range</th>
+      <th>Recommendation</th>
+      <th>Badge Color</th>
+    </tr>
+    <tr>
+      <td>≥ 90%</td>
+      <td>Increase Window (+15 min)</td>
+      <td style="background: #dcfce7;">Green</td>
+    </tr>
+    <tr>
+      <td>85-89%</td>
+      <td>Maintain</td>
+      <td style="background: #dbeafe;">Blue</td>
+    </tr>
+    <tr>
+      <td>80-84%</td>
+      <td>Review Needed</td>
+      <td style="background: #f3e8ff;">Purple</td>
+    </tr>
+    <tr>
+      <td>< 80%</td>
+      <td>Decrease Window (-15 min)</td>
+      <td style="background: #fef3c7;">Amber</td>
+    </tr>
+  </table>
+
+  <h3>Checklist</h3>
+  <ul class="checklist">
+    <li>Patient list shows linked patients</li>
+    <li>Patient dashboard displays all metrics</li>
+    <li>Weekly summaries are calculated correctly</li>
+    <li>Baseline comparison shows improvement</li>
+    <li>Titration recommendation is appropriate for SE</li>
+    <li>Prescription form saves correctly</li>
+    <li>Prescription history displays</li>
+  </ul>
+
+  <h2>Seeded Test Data</h2>
+
+  <p>The test patient has 7 days of diary data (Jan 13-19, 2026):</p>
+
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>TST</th>
+      <th>TIB</th>
+      <th>SE%</th>
+      <th>Quality</th>
+    </tr>
+    <tr><td>Jan 19</td><td>6h 28m</td><td>7h 33m</td><td>86%</td><td>😴</td></tr>
+    <tr><td>Jan 18</td><td>9h 30m</td><td>9h 40m</td><td>98%</td><td>😐</td></tr>
+    <tr><td>Jan 17</td><td>9h 09m</td><td>9h 40m</td><td>95%</td><td>😴</td></tr>
+    <tr><td>Jan 16</td><td>6h 14m</td><td>7h 04m</td><td>88%</td><td>😐</td></tr>
+    <tr><td>Jan 15</td><td>6h 43m</td><td>7h 34m</td><td>89%</td><td>😐</td></tr>
+    <tr><td>Jan 14</td><td>7h 29m</td><td>8h 31m</td><td>88%</td><td>😴</td></tr>
+    <tr><td>Jan 13</td><td>7h 28m</td><td>8h 07m</td><td>92%</td><td>😐</td></tr>
+  </table>
+
+  <p><strong>Average SE:</strong> ~91% (should trigger "Increase Window" recommendation)</p>
+
+  <h2>Key URLs Summary</h2>
+
+  <div class="box info">
+    <strong>Note:</strong> All localhost links below require the dev server to be running (<code>npm run dev</code>).
+    Links open in a new tab. URLs with <code>[id]</code> are templates - replace with actual patient ID from database.
+  </div>
+
+  <table>
+    <tr>
+      <th>Page</th>
+      <th>URL</th>
+      <th>Role</th>
+    </tr>
+    <tr>
+      <td>Home</td>
+      <td><a href="http://localhost:3000" target="_blank">localhost:3000</a></td>
+      <td>Public</td>
+    </tr>
+    <tr>
+      <td>Login</td>
+      <td><a href="http://localhost:3000/auth/login" target="_blank">localhost:3000/auth/login</a></td>
+      <td>Public</td>
+    </tr>
+    <tr>
+      <td>Therapist Signup</td>
+      <td><a href="http://localhost:3000/auth/signup" target="_blank">localhost:3000/auth/signup</a></td>
+      <td>Public</td>
+    </tr>
+    <tr>
+      <td>Patient Dashboard</td>
+      <td><a href="http://localhost:3000/patient" target="_blank">localhost:3000/patient</a></td>
+      <td>Patient</td>
+    </tr>
+    <tr>
+      <td>New Diary Entry</td>
+      <td><a href="http://localhost:3000/patient/diary/new" target="_blank">localhost:3000/patient/diary/new</a></td>
+      <td>Patient</td>
+    </tr>
+    <tr>
+      <td>Diary History</td>
+      <td><a href="http://localhost:3000/patient/diary" target="_blank">localhost:3000/patient/diary</a></td>
+      <td>Patient</td>
+    </tr>
+    <tr>
+      <td>Patient Progress</td>
+      <td><a href="http://localhost:3000/patient/progress" target="_blank">localhost:3000/patient/progress</a></td>
+      <td>Patient</td>
+    </tr>
+    <tr>
+      <td>Therapist Dashboard</td>
+      <td><a href="http://localhost:3000/therapist" target="_blank">localhost:3000/therapist</a></td>
+      <td>Therapist</td>
+    </tr>
+    <tr>
+      <td>Patient List</td>
+      <td><a href="http://localhost:3000/therapist/patients" target="_blank">localhost:3000/therapist/patients</a></td>
+      <td>Therapist</td>
+    </tr>
+    <tr>
+      <td>Invite Patient</td>
+      <td><a href="http://localhost:3000/therapist/patients/invite" target="_blank">localhost:3000/therapist/patients/invite</a></td>
+      <td>Therapist</td>
+    </tr>
+    <tr>
+      <td>Patient Detail</td>
+      <td><code>/therapist/patients/[id]</code> <em>(replace [id] with patient UUID)</em></td>
+      <td>Therapist</td>
+    </tr>
+    <tr>
+      <td>Prescription</td>
+      <td><code>/therapist/patients/[id]/prescription</code> <em>(replace [id] with patient UUID)</em></td>
+      <td>Therapist</td>
+    </tr>
+  </table>
+
+  <h2>Troubleshooting</h2>
+
+  <div class="box">
+    <strong>Issue: "Invalid login credentials"</strong><br>
+    <em>Solution:</em> Email needs confirmation. Go to Supabase Dashboard → Authentication → Users → Find user → Click "..." → "Confirm user email"
+  </div>
+
+  <div class="box">
+    <strong>Issue: "Email not confirmed"</strong><br>
+    <em>Solution:</em> Same as above - confirm email in Supabase Dashboard
+  </div>
+
+  <div class="box">
+    <strong>Issue: Patient list is empty for therapist</strong><br>
+    <em>Solution:</em> Patient needs to be linked to therapist. Update <code>patients.therapist_id</code> in SQL Editor
+  </div>
+
+  <div class="box">
+    <strong>Issue: "Not found" on patient detail page</strong><br>
+    <em>Solution:</em> Either patient doesn't exist or isn't linked to logged-in therapist
+  </div>
+
+  <h2>External Links</h2>
+  <ul>
+    <li><a href="https://github.com/Aurelgroh/sleep-diary-app" target="_blank">GitHub Repository</a></li>
+    <li><a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz" target="_blank">Supabase Dashboard</a> (requires Supabase login)</li>
+    <li><a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz/auth/users" target="_blank">Supabase Auth Users</a> (requires Supabase login)</li>
+    <li><a href="https://supabase.com/dashboard/project/eiunmzzehysyrdacpzkz/editor" target="_blank">Supabase SQL Editor</a> (requires Supabase login)</li>
+  </ul>
+
+  <hr style="margin-top: 40px;">
+  <p style="text-align: center; color: #64748b; font-size: 14px;">
+    SleepDiary Testing Guide • Generated January 2026<br>
+    To save as PDF: Print this page (Cmd+P) → Save as PDF
+  </p>
+</body>
+</html>

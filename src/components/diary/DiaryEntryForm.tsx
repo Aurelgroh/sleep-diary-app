@@ -8,15 +8,14 @@ import {
   QUESTIONS,
   CATEGORIES,
   shouldShowQuestion,
+  getDynamicQuestionText,
+  DEFAULT_TIMES,
+  validateTimeAgainstPrevious,
   type Question,
   type QuestionCategory
 } from '@/lib/sleep-diary/questions'
 import {
   prepareDiaryEntry,
-  calculateSleepMetrics,
-  formatDuration,
-  formatTime,
-  getSleepEfficiencyColor,
   validateTimeOrder,
   validateOutOfBedTimes,
   type DiaryAnswers
@@ -42,6 +41,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [step, setStep] = useState<FormStep>('questions')
   const [error, setError] = useState<string | null>(null)
+  const [warning, setWarning] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Get visible questions based on current answers
@@ -59,8 +59,17 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
     : null
 
   const updateAnswer = (questionId: string, value: unknown) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }))
+    const newAnswers = { ...answers, [questionId]: value }
+    setAnswers(newAnswers)
     setError(null)
+
+    // Check for inline validation warnings on time inputs
+    if (typeof value === 'string' && currentQuestion?.inputType === 'time') {
+      const validation = validateTimeAgainstPrevious(questionId, value, newAnswers)
+      setWarning(validation.warning || null)
+    } else {
+      setWarning(null)
+    }
   }
 
   const validateCurrentAnswer = (): boolean => {
@@ -177,8 +186,10 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       case 'time':
         return (
           <TimeInput
+            key={question.id}
             value={value as string}
             onChange={(v) => updateAnswer(question.id, v)}
+            defaultTime={DEFAULT_TIMES[question.id]}
             error={error ?? undefined}
           />
         )
@@ -186,6 +197,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       case 'duration':
         return (
           <DurationInput
+            key={question.id}
             value={value as number | undefined}
             onChange={(v) => updateAnswer(question.id, v)}
             minValue={question.validation?.minValue}
@@ -196,6 +208,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       case 'yes_no':
         return (
           <YesNoInput
+            key={question.id}
             value={value as boolean | undefined}
             onChange={(v) => updateAnswer(question.id, v)}
             error={error ?? undefined}
@@ -205,6 +218,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       case 'mcq':
         return (
           <MultipleChoice
+            key={question.id}
             value={value as number | undefined}
             onChange={(v) => updateAnswer(question.id, v)}
             options={question.options ?? []}
@@ -215,6 +229,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       case 'feeling':
         return (
           <FeelingScale
+            key={question.id}
             value={value as number | undefined}
             onChange={(v) => updateAnswer(question.id, v)}
             error={error ?? undefined}
@@ -226,102 +241,23 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
     }
   }
 
-  // Summary view
+  // Summary view - simplified to just show confirmation
   if (step === 'summary') {
-    const diaryAnswers = answers as unknown as DiaryAnswers
-    const metrics = calculateSleepMetrics(diaryAnswers)
-
     return (
       <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-slate-900">Review Your Entry</h2>
-          <p className="text-slate-600 mt-1">Make sure everything looks correct</p>
-        </div>
-
-        {/* Sleep Times Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h3 className="font-semibold text-slate-900 mb-4">Sleep Times</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-slate-500">Bed Time</p>
-              <p className="font-medium">{formatTime(metrics.ttb)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Sleep Attempt</p>
-              <p className="font-medium">{formatTime(metrics.tts)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Wake Time</p>
-              <p className="font-medium">{formatTime(metrics.tfa)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Out of Bed</p>
-              <p className="font-medium">{formatTime(metrics.tob)}</p>
-            </div>
+        {/* Congratulations header */}
+        <div className="text-center py-8">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
-        </div>
-
-        {/* Wake Periods Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h3 className="font-semibold text-slate-900 mb-4">Wake Periods</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-slate-600">Time to fall asleep</span>
-              <span className="font-medium">{formatDuration(metrics.sol)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-600">Night awakenings</span>
-              <span className="font-medium">{metrics.awakenings} times</span>
-            </div>
-            {metrics.waso > 0 && (
-              <div className="flex justify-between">
-                <span className="text-slate-600">Time awake during night</span>
-                <span className="font-medium">{formatDuration(metrics.waso)}</span>
-              </div>
-            )}
-            {metrics.ema > 0 && (
-              <div className="flex justify-between">
-                <span className="text-slate-600">Woke early by</span>
-                <span className="font-medium">{formatDuration(metrics.ema)}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Calculated Metrics Card */}
-        <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
-          <h3 className="font-semibold text-slate-900 mb-4">Your Sleep Summary</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-white rounded-xl">
-              <p className="text-xs text-slate-500">Time in Bed</p>
-              <p className="text-2xl font-bold text-slate-900">{formatDuration(metrics.tib)}</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-xl">
-              <p className="text-xs text-slate-500">Total Sleep</p>
-              <p className="text-2xl font-bold text-slate-900">{formatDuration(metrics.tst)}</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-xl">
-              <p className="text-xs text-slate-500">Time Awake</p>
-              <p className="text-2xl font-bold text-slate-900">{formatDuration(metrics.twt)}</p>
-            </div>
-            <div className="text-center p-4 bg-white rounded-xl">
-              <p className="text-xs text-slate-500">Sleep Efficiency</p>
-              <p className={`text-2xl font-bold ${getSleepEfficiencyColor(metrics.se)}`}>
-                {metrics.se}%
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quality Rating */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center">
-          <p className="text-sm text-slate-500 mb-2">Morning Feeling</p>
-          <p className="text-3xl">
-            {metrics.quality_rating === 1 && '😫'}
-            {metrics.quality_rating === 2 && '😴'}
-            {metrics.quality_rating === 3 && '😐'}
-            {metrics.quality_rating === 4 && '😊'}
-            {metrics.quality_rating === 5 && '🌟'}
+          <h2 className="text-2xl font-bold text-slate-900">Ready to Submit!</h2>
+          <p className="text-slate-600 mt-2">
+            Your sleep diary entry is ready to be saved.
+          </p>
+          <p className="text-slate-500 text-sm mt-1">
+            Your therapist will review your progress.
           </p>
         </div>
 
@@ -344,7 +280,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-4 px-6 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="flex-1 py-4 px-6 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             {isSubmitting ? 'Saving...' : 'Save Entry'}
           </button>
@@ -406,13 +342,27 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       {/* Question */}
       {currentQuestion && (
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-900">{currentQuestion.question}</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {getDynamicQuestionText(currentQuestion, answers)}
+          </h2>
 
           {currentQuestion.helperText && (
             <p className="text-sm text-slate-500">{currentQuestion.helperText}</p>
           )}
 
           {renderQuestionInput(currentQuestion)}
+
+          {/* Inline validation warning */}
+          {warning && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-amber-700 text-sm flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                {warning}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

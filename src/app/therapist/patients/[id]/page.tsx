@@ -21,6 +21,12 @@ import {
   getActionLabel,
   formatPrescriptionTime
 } from '@/lib/sleep-diary/titration'
+import { SleepDataVisualization } from '@/components/charts/SleepDataVisualization'
+import type { DiaryEntry as ChartDiaryEntry, ISIScore } from '@/components/charts/ChartTabs'
+import { ExportButton } from '@/components/export/ExportButton'
+import { ChatSection } from '@/components/chat/ChatSection'
+import { SessionsSection } from '@/components/sessions/SessionsSection'
+import { ISISection } from '@/components/isi/ISISection'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -94,6 +100,13 @@ export default async function PatientDashboard({ params }: PageProps) {
 
   // Use first 7 entries as baseline (or all if less than 7)
   const baselineEntries = allEntries?.slice(0, 7) || []
+
+  // Fetch ISI scores
+  const { data: isiScores } = await supabase
+    .from('isi_scores')
+    .select('*')
+    .eq('patient_id', patientId)
+    .order('date', { ascending: false })
 
   // Calculate metrics
   const thisWeekMetrics = calculateWeeklyMetrics((thisWeekEntries || []) as DiaryEntry[])
@@ -234,24 +247,24 @@ export default async function PatientDashboard({ params }: PageProps) {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Total Sleep</span>
-              <span className="font-medium">{formatDurationHM(thisWeekMetrics.avgTst)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(thisWeekMetrics.avgTst)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Time in Bed</span>
-              <span className="font-medium">{formatDurationHM(thisWeekMetrics.avgTib)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(thisWeekMetrics.avgTib)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg SOL</span>
-              <span className="font-medium">{thisWeekMetrics.avgSol !== null ? `${Math.round(thisWeekMetrics.avgSol)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{thisWeekMetrics.avgSol !== null ? `${Math.round(thisWeekMetrics.avgSol)}m` : '--'}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg WASO</span>
-              <span className="font-medium">{thisWeekMetrics.avgWaso !== null ? `${Math.round(thisWeekMetrics.avgWaso)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{thisWeekMetrics.avgWaso !== null ? `${Math.round(thisWeekMetrics.avgWaso)}m` : '--'}</span>
             </div>
             <div className="pt-2 border-t border-slate-100">
               <div className="flex justify-between items-center">
                 <span className="text-slate-600">Days Logged</span>
-                <span className="font-medium">{thisWeekMetrics.daysLogged}/7 ({completionRate}%)</span>
+                <span className="font-medium text-slate-900">{thisWeekMetrics.daysLogged}/7 ({completionRate}%)</span>
               </div>
             </div>
           </div>
@@ -279,24 +292,24 @@ export default async function PatientDashboard({ params }: PageProps) {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Total Sleep</span>
-              <span className="font-medium">{formatDurationHM(lastWeekMetrics.avgTst)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(lastWeekMetrics.avgTst)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Time in Bed</span>
-              <span className="font-medium">{formatDurationHM(lastWeekMetrics.avgTib)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(lastWeekMetrics.avgTib)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg SOL</span>
-              <span className="font-medium">{lastWeekMetrics.avgSol !== null ? `${Math.round(lastWeekMetrics.avgSol)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{lastWeekMetrics.avgSol !== null ? `${Math.round(lastWeekMetrics.avgSol)}m` : '--'}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg WASO</span>
-              <span className="font-medium">{lastWeekMetrics.avgWaso !== null ? `${Math.round(lastWeekMetrics.avgWaso)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{lastWeekMetrics.avgWaso !== null ? `${Math.round(lastWeekMetrics.avgWaso)}m` : '--'}</span>
             </div>
             <div className="pt-2 border-t border-slate-100">
               <div className="flex justify-between items-center">
                 <span className="text-slate-600">Days Logged</span>
-                <span className="font-medium">{lastWeekMetrics.daysLogged}/7</span>
+                <span className="font-medium text-slate-900">{lastWeekMetrics.daysLogged}/7</span>
               </div>
             </div>
           </div>
@@ -324,73 +337,135 @@ export default async function PatientDashboard({ params }: PageProps) {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Total Sleep</span>
-              <span className="font-medium">{formatDurationHM(baselineMetrics.avgTst)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(baselineMetrics.avgTst)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg Time in Bed</span>
-              <span className="font-medium">{formatDurationHM(baselineMetrics.avgTib)}</span>
+              <span className="font-medium text-slate-900">{formatDurationHM(baselineMetrics.avgTib)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg SOL</span>
-              <span className="font-medium">{baselineMetrics.avgSol !== null ? `${Math.round(baselineMetrics.avgSol)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{baselineMetrics.avgSol !== null ? `${Math.round(baselineMetrics.avgSol)}m` : '--'}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600">Avg WASO</span>
-              <span className="font-medium">{baselineMetrics.avgWaso !== null ? `${Math.round(baselineMetrics.avgWaso)}m` : '--'}</span>
+              <span className="font-medium text-slate-900">{baselineMetrics.avgWaso !== null ? `${Math.round(baselineMetrics.avgWaso)}m` : '--'}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Diary Entries */}
+      {/* Messages */}
+      <ChatSection
+        patientId={patientId}
+        currentUserId={user!.id}
+        patientName={patient.name}
+      />
+
+      {/* Sessions */}
+      <SessionsSection
+        patientId={patientId}
+        therapistId={user!.id}
+        currentSession={patient.current_session}
+        isTherapist={true}
+      />
+
+      {/* ISI Assessments */}
+      <ISISection patientId={patientId} />
+
+      {/* Sleep Data Visualization (Chart + Calendar) */}
+      {allEntries && allEntries.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-slate-900">Sleep Trends</h2>
+            <p className="text-sm text-slate-500">Toggle between chart and calendar views</p>
+          </div>
+          <SleepDataVisualization entries={allEntries as ChartDiaryEntry[]} isiScores={(isiScores || []) as ISIScore[]} />
+        </div>
+      )}
+
+      {/* Sleep Data Table - Excel-like */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="p-6 border-b border-slate-200">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Diary Entries</h2>
-          <p className="text-sm text-slate-500">Last 14 days</p>
+        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Sleep Data</h2>
+            <p className="text-sm text-slate-500">All diary entries ({allEntries?.length || 0} total)</p>
+          </div>
+          {allEntries && allEntries.length > 0 && (
+            <ExportButton entries={allEntries as DiaryEntry[]} patientName={patient.name} />
+          )}
         </div>
 
         {(allEntries && allEntries.length > 0) ? (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+            <table className="w-full text-xs border-collapse">
+              <thead className="bg-slate-100 sticky top-0">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Bed → Wake</th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">TST</th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">TIB</th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">SOL</th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">WASO</th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">SE</th>
-                  <th className="text-center px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Quality</th>
+                  <th className="border border-slate-300 px-2 py-2 text-left font-semibold text-slate-700 whitespace-nowrap">Date</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">TTB</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">TTS</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">TFA</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">TOB</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap bg-blue-50">TIB</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap bg-green-50">TST</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap bg-amber-50">TWT</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">SOL</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">NWAK</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">WASO</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">EMA</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap bg-purple-50">SE%</th>
+                  <th className="border border-slate-300 px-2 py-2 text-center font-semibold text-slate-700 whitespace-nowrap">Q</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
-                {allEntries.slice(0, 14).reverse().map((entry) => (
-                  <tr key={entry.id} className="hover:bg-slate-50">
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900">
-                      {new Date(entry.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+              <tbody>
+                {[...allEntries].reverse().map((entry, idx) => (
+                  <tr key={entry.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                    <td className="border border-slate-200 px-2 py-1.5 font-medium text-slate-900 whitespace-nowrap">
+                      {new Date(entry.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {formatTimeFromISO(entry.ttb)} → {formatTimeFromISO(entry.tob)}
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {formatTimeFromISO(entry.ttb)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-900 text-right font-medium">
-                      {formatDurationHM(entry.tst)}
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {formatTimeFromISO(entry.tts)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600 text-right">
-                      {formatDurationHM(entry.tib)}
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {formatTimeFromISO(entry.tfa)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600 text-right">
-                      {entry.sol !== null ? `${entry.sol}m` : '--'}
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {formatTimeFromISO(entry.tob)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600 text-right">
-                      {entry.waso !== null ? `${entry.waso}m` : '--'}
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-900 whitespace-nowrap bg-blue-50/50">
+                      {entry.tib !== null ? `${Math.floor(entry.tib / 60)}:${String(entry.tib % 60).padStart(2, '0')}` : '--'}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-sm font-medium ${getSEBadgeClass(entry.se)}`}>
-                        {formatSE(entry.se)}
-                      </span>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center font-medium text-slate-900 whitespace-nowrap bg-green-50/50">
+                      {entry.tst !== null ? `${Math.floor(entry.tst / 60)}:${String(entry.tst % 60).padStart(2, '0')}` : '--'}
                     </td>
-                    <td className="px-6 py-4 text-center text-lg">
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-900 whitespace-nowrap bg-amber-50/50">
+                      {entry.twt !== null ? entry.twt : '--'}
+                    </td>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {entry.sol !== null ? entry.sol : '--'}
+                    </td>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {entry.awakenings !== null ? entry.awakenings : '--'}
+                    </td>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {entry.waso !== null ? entry.waso : '--'}
+                    </td>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center text-slate-700 whitespace-nowrap">
+                      {entry.ema !== null ? entry.ema : '--'}
+                    </td>
+                    <td className={`border border-slate-200 px-2 py-1.5 text-center font-semibold whitespace-nowrap ${
+                      entry.se !== null
+                        ? entry.se >= 85 ? 'bg-green-100 text-green-800'
+                        : entry.se >= 70 ? 'bg-amber-100 text-amber-800'
+                        : 'bg-red-100 text-red-800'
+                        : ''
+                    }`}>
+                      {entry.se !== null ? Math.round(entry.se) : '--'}
+                    </td>
+                    <td className="border border-slate-200 px-2 py-1.5 text-center whitespace-nowrap">
                       {getQualityEmoji(entry.quality_rating)}
                     </td>
                   </tr>

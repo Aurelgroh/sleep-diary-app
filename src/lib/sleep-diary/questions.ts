@@ -138,7 +138,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q7_waso',
     category: 'middle_of_night',
-    question: 'In total, how long were you awake during those times?',
+    question: 'In total, how long were you awake during those {awakenings} times?',
     inputType: 'duration',
     conditional: {
       dependsOn: 'q6_awakenings',
@@ -164,7 +164,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'q9_tfa',
     category: 'waking_up',
-    question: 'What time did you wake up for the last time?',
+    question: 'At what time did you wake up this morning?',
     inputType: 'time',
     validation: { required: true },
     helperText: 'Your final awakening time'
@@ -285,4 +285,93 @@ export function validateCategory(
   }
 
   return { valid: Object.keys(errors).length === 0, errors }
+}
+
+// Default times for time questions (24-hour format "HH:MM")
+export const DEFAULT_TIMES: Record<string, string> = {
+  'q1_ttb': '22:00',   // Bed time: 10 PM
+  'q2_tts': '22:30',   // Sleep attempt: 10:30 PM
+  'q9_tfa': '06:30',   // Wake time: 6:30 AM
+  'q13_tob': '07:00',  // Out of bed: 7 AM
+}
+
+// Get dynamic question text with placeholders replaced
+export function getDynamicQuestionText(
+  question: Question,
+  answers: Record<string, unknown>
+): string {
+  let text = question.question
+
+  // Replace {awakenings} placeholder with actual value
+  if (text.includes('{awakenings}')) {
+    const awakeningValue = answers['q6_awakenings']
+    if (typeof awakeningValue === 'number') {
+      const awakeningLabel = AWAKENING_OPTIONS.find(o => o.value === awakeningValue)?.label || ''
+      // Extract just the number part (e.g., "1-2 times" -> "1-2")
+      const awakeningCount = awakeningLabel.replace(' times', '')
+      text = text.replace('{awakenings}', awakeningCount)
+    }
+  }
+
+  return text
+}
+
+// Inline validation for time questions (warns during entry)
+export function validateTimeAgainstPrevious(
+  questionId: string,
+  value: string,
+  answers: Record<string, unknown>
+): { warning?: string } {
+  if (!value) return {}
+
+  const parseTime = (timeStr: string): number => {
+    const [hours, minutes] = timeStr.split(':').map(Number)
+    return hours * 60 + minutes
+  }
+
+  const currentTime = parseTime(value)
+
+  switch (questionId) {
+    case 'q2_tts': {
+      // Sleep attempt should be at or after bed time, but warn if > 2 hours later
+      const bedTime = answers['q1_ttb'] as string
+      if (bedTime) {
+        const bedMinutes = parseTime(bedTime)
+        let diff = currentTime - bedMinutes
+        if (diff < 0) diff += 24 * 60 // Handle overnight
+        if (diff > 120) {
+          return { warning: 'This is more than 2 hours after getting into bed' }
+        }
+      }
+      break
+    }
+    case 'q9_tfa': {
+      // Wake time should be after sleep attempt
+      const sleepTime = answers['q2_tts'] as string
+      if (sleepTime) {
+        const sleepMinutes = parseTime(sleepTime)
+        let diff = currentTime - sleepMinutes
+        // Adjust for overnight (assuming wake is next day if it appears earlier)
+        if (diff < 0) diff += 24 * 60
+        if (diff < 60) {
+          return { warning: 'This seems very soon after trying to sleep' }
+        }
+      }
+      break
+    }
+    case 'q13_tob': {
+      // Out of bed should be at or after wake time
+      const wakeTime = answers['q9_tfa'] as string
+      if (wakeTime) {
+        const wakeMinutes = parseTime(wakeTime)
+        let diff = currentTime - wakeMinutes
+        if (diff < 0 && diff > -60) {
+          return { warning: 'Out of bed time appears to be before wake time' }
+        }
+      }
+      break
+    }
+  }
+
+  return {}
 }
