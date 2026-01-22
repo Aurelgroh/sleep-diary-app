@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
     '/auth/setup',      // Therapist password setup
     '/auth/pending',    // Pending activation page
     '/invite',          // Patient invitation (includes /invite/accept)
+    '/api/cron',        // Cron jobs (protected by CRON_SECRET)
   ]
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
