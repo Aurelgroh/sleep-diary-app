@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import 'dotenv/config'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
