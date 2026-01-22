@@ -132,26 +132,42 @@ function AcceptContent() {
       }
     }
 
-    // Create patient record
-    const { error: patientError } = await supabase.from('patients').insert({
-      id: userId,
-      email: invite.email,
-      name: invite.name,
-      therapist_id: invite.therapist_id,
-      status: 'baseline',
-    })
+    // Create patient record via API (bypasses RLS)
+    try {
+      console.log('Calling patient setup API (existing user) with:', {
+        user_id: userId,
+        email: invite.email,
+        name: invite.name,
+        therapist_id: invite.therapist_id,
+        invitation_id: invite.id,
+      })
 
-    if (patientError) {
-      setError('Failed to complete registration. Please try again or contact support.')
+      const setupResponse = await fetch('/api/patient/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          email: invite.email,
+          name: invite.name,
+          therapist_id: invite.therapist_id,
+          invitation_id: invite.id,
+        }),
+      })
+
+      const setupResult = await setupResponse.json()
+      console.log('Patient setup API response:', setupResponse.status, setupResult)
+
+      if (!setupResponse.ok) {
+        setError(setupResult.error || 'Failed to complete registration. Please try again or contact support.')
+        setStep('error')
+        return
+      }
+    } catch (fetchError) {
+      console.error('Patient setup fetch error:', fetchError)
+      setError('Failed to connect to setup service. Please try again.')
       setStep('error')
       return
     }
-
-    // Mark invitation as used
-    await supabase
-      .from('invitations')
-      .update({ used_at: new Date().toISOString(), used_by: userId })
-      .eq('id', invite.id)
 
     setPatientId(userId)
     setStep('tutorial')
@@ -216,27 +232,43 @@ function AcceptContent() {
       return
     }
 
-    // Create patient record
-    const { error: patientError } = await supabase.from('patients').insert({
-      id: authData.user.id,
-      email: invitation.email,
-      name: editedName,
-      therapist_id: invitation.therapist_id,
-      status: 'baseline',
-    })
+    // Create patient record via API (bypasses RLS)
+    try {
+      console.log('Calling patient setup API with:', {
+        user_id: authData.user.id,
+        email: invitation.email,
+        name: editedName,
+        therapist_id: invitation.therapist_id,
+        invitation_id: invitation.id,
+      })
 
-    if (patientError) {
-      console.error('Patient creation error:', patientError)
-      setError('Account created but failed to complete setup. Please contact your therapist.')
+      const setupResponse = await fetch('/api/patient/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: authData.user.id,
+          email: invitation.email,
+          name: editedName,
+          therapist_id: invitation.therapist_id,
+          invitation_id: invitation.id,
+        }),
+      })
+
+      const setupResult = await setupResponse.json()
+      console.log('Patient setup API response:', setupResponse.status, setupResult)
+
+      if (!setupResponse.ok) {
+        console.error('Patient creation error:', setupResult)
+        setError(`Account created but setup failed: ${setupResult.error || 'Unknown error'}. Please contact your therapist.`)
+        setLoading(false)
+        return
+      }
+    } catch (fetchError) {
+      console.error('Patient setup fetch error:', fetchError)
+      setError('Account created but failed to connect to setup service. Please try logging in.')
       setLoading(false)
       return
     }
-
-    // Mark invitation as used
-    await supabase
-      .from('invitations')
-      .update({ used_at: new Date().toISOString(), used_by: authData.user.id })
-      .eq('id', invitation.id)
 
     setPatientId(authData.user.id)
 

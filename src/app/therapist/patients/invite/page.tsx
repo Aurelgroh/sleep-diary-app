@@ -70,23 +70,22 @@ export default function InvitePatientPage() {
         return
       }
 
-      // Send invitation email via Supabase Auth magic link
-      const { error: inviteError } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/invite/accept?token=${invitation.token}`,
-          data: {
-            invitation_token: invitation.token,
-            role: 'patient',
-            name,
-          },
-        },
+      // Send invitation email via custom API (uses Resend)
+      const emailResponse = await fetch('/api/patient/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          name,
+          invitation_token: invitation.token,
+        }),
       })
 
-      if (inviteError) {
+      if (!emailResponse.ok) {
+        const emailResult = await emailResponse.json()
         // Delete the invitation if email fails
         await supabase.from('invitations').delete().eq('token', invitation.token)
-        setError(inviteError.message)
+        setError(emailResult.error || 'Failed to send invitation email')
         setLoading(false)
         return
       }

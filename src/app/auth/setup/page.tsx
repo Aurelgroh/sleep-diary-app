@@ -130,30 +130,26 @@ function SetupContent() {
         return
       }
 
-      // Create the therapist record
-      const { error: insertError } = await supabase
-        .from('therapists')
-        .insert({
-          id: authData.user.id,
+      // Create the therapist record via API (bypasses RLS)
+      const setupResponse = await fetch('/api/therapist/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: authData.user.id,
           email: invite!.email,
           name: invite!.name,
           credentials: invite!.credentials,
-          status: 'active',
-          activated_at: new Date().toISOString(),
-        })
+          invite_id: invite!.id,
+        }),
+      })
 
-      if (insertError) {
-        console.error('Failed to create therapist:', insertError)
+      if (!setupResponse.ok) {
+        const setupError = await setupResponse.json()
+        console.error('Failed to create therapist:', setupError)
         setError('Account created but failed to complete setup. Please contact support.')
         setLoading(false)
         return
       }
-
-      // Delete the invite
-      await supabase
-        .from('therapist_invites')
-        .delete()
-        .eq('id', invite!.id)
 
       // If email confirmation is disabled, user is already logged in
       if (authData.session) {
