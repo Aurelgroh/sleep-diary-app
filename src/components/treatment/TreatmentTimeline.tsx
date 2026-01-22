@@ -8,12 +8,12 @@ interface TreatmentTimelineProps {
 const SESSIONS = [
   { number: 0, label: 'Baseline', description: 'Collecting sleep data' },
   { number: 1, label: 'Session 1', description: 'Foundation' },
-  { number: 2, label: 'Session 2', description: 'Sleep restriction' },
-  { number: 3, label: 'Session 3', description: 'Stimulus control' },
-  { number: 4, label: 'Session 4', description: 'Cognitive strategies' },
-  { number: 5, label: 'Session 5', description: 'Titration' },
-  { number: 6, label: 'Session 6', description: 'Maintenance' },
-  { number: 7, label: 'Session 7', description: 'Review' },
+  { number: 2, label: 'Session 2', description: 'Active treatment' },
+  { number: 3, label: 'Session 3', description: 'Active treatment' },
+  { number: 4, label: 'Session 4', description: 'Active treatment' },
+  { number: 5, label: 'Session 5', description: 'Active treatment' },
+  { number: 6, label: 'Session 6', description: 'Active treatment' },
+  { number: 7, label: 'Session 7', description: 'Active treatment' },
   { number: 8, label: 'Session 8', description: 'Completion' },
 ]
 

@@ -34,6 +34,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
   const [scheduling, setScheduling] = useState(false)
   const [editingSession, setEditingSession] = useState<Session | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -58,10 +59,11 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
     if (!newSessionDate || scheduling) return
 
     setScheduling(true)
+    setError(null)
 
     if (editingSession) {
       // Update existing session
-      const { data, error } = await supabase
+      const { data, error: updateError } = await supabase
         .from('sessions')
         .update({
           date: newSessionDate,
@@ -72,7 +74,10 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         .select()
         .single()
 
-      if (!error && data) {
+      if (updateError) {
+        console.error('Error updating session:', updateError)
+        setError(`Failed to update session: ${updateError.message}`)
+      } else if (data) {
         setSessions(prev => prev.map(s => s.id === editingSession.id ? data as unknown as Session : s))
         resetForm()
       }
@@ -82,7 +87,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         ? Math.max(...sessions.map(s => s.session_number)) + 1
         : 1
 
-      const { data, error } = await supabase.from('sessions').insert({
+      const { data, error: insertError } = await supabase.from('sessions').insert({
         patient_id: patientId,
         therapist_id: therapistId,
         session_number: nextSessionNumber,
@@ -91,7 +96,10 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         notes: newSessionNotes || null
       }).select().single()
 
-      if (!error && data) {
+      if (insertError) {
+        console.error('Error creating session:', insertError)
+        setError(`Failed to schedule session: ${insertError.message}`)
+      } else if (data) {
         setSessions(prev => [...prev, data as unknown as Session])
         resetForm()
       }
@@ -105,6 +113,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
     setNewSessionDate('')
     setNewSessionTime('')
     setNewSessionNotes('')
+    setError(null)
   }
 
   const startEditing = (session: Session) => {
@@ -200,6 +209,11 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
             {editingSession ? 'Edit Session' : 'Schedule New Session'}
           </h3>
           <form onSubmit={scheduleSession} className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">

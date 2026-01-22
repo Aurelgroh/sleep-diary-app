@@ -25,19 +25,23 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
   const [newMessage, setNewMessage] = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
   // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
-      const { data, error } = await supabase
+      const { data, error: fetchError } = await supabase
         .from('messages')
         .select('*')
         .eq('patient_id', patientId)
         .order('created_at', { ascending: true })
 
-      if (!error && data) {
+      if (fetchError) {
+        console.error('Error fetching messages:', fetchError)
+        setError(`Failed to load messages: ${fetchError.message}`)
+      } else if (data) {
         setMessages(data as Message[])
         // Mark unread messages as read
         const unreadIds = data
@@ -97,14 +101,18 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
     if (!newMessage.trim() || sending) return
 
     setSending(true)
-    const { error } = await supabase.from('messages').insert({
+    setError(null)
+    const { error: sendError } = await supabase.from('messages').insert({
       patient_id: patientId,
       sender_type: userType,
       sender_id: currentUserId,
       content: newMessage.trim()
     })
 
-    if (!error) {
+    if (sendError) {
+      console.error('Error sending message:', sendError)
+      setError(`Failed to send message: ${sendError.message}`)
+    } else {
       setNewMessage('')
     }
     setSending(false)
@@ -199,6 +207,11 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
 
       {/* Input */}
       <form onSubmit={sendMessage} className="p-4 border-t border-slate-200 bg-white">
+        {error && (
+          <div className="mb-2 p-2 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs">
+            {error}
+          </div>
+        )}
         <div className="flex gap-2">
           <input
             type="text"
