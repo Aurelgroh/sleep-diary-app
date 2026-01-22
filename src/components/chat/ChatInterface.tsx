@@ -72,8 +72,22 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
           filter: `patient_id=eq.${patientId}`
         },
         (payload) => {
+          console.log('Realtime message received:', payload)
           const newMsg = payload.new as Message
-          setMessages(prev => [...prev, newMsg])
+
+          // Only add if not already in the list (prevents duplicates from optimistic updates)
+          setMessages(prev => {
+            const exists = prev.some(m => m.id === newMsg.id)
+            if (exists) return prev
+
+            // Also remove any temp messages that might match (by content and sender)
+            const filtered = prev.filter(m =>
+              !m.id.startsWith('temp-') ||
+              m.content !== newMsg.content ||
+              m.sender_id !== newMsg.sender_id
+            )
+            return [...filtered, newMsg]
+          })
 
           // Mark as read if from the other party
           if (newMsg.sender_type !== userType) {
@@ -84,7 +98,9 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
           }
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        console.log('Realtime subscription status:', status, err || '')
+      })
 
     return () => {
       supabase.removeChannel(channel)
@@ -100,20 +116,44 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
     e.preventDefault()
     if (!newMessage.trim() || sending) return
 
-    setSending(true)
-    setError(null)
-    const { error: sendError } = await supabase.from('messages').insert({
+    const messageContent = newMessage.trim()
+    const tempId = `temp-${Date.now()}`
+
+    // Optimistic update - add message immediately
+    const optimisticMessage: Message = {
+      id: tempId,
       patient_id: patientId,
       sender_type: userType,
       sender_id: currentUserId,
-      content: newMessage.trim()
-    })
+      content: messageContent,
+      read_at: null,
+      created_at: new Date().toISOString()
+    }
+
+    setMessages(prev => [...prev, optimisticMessage])
+    setNewMessage('')
+    setSending(true)
+    setError(null)
+
+    const { data, error: sendError } = await supabase
+      .from('messages')
+      .insert({
+        patient_id: patientId,
+        sender_type: userType,
+        sender_id: currentUserId,
+        content: messageContent
+      })
+      .select()
+      .single()
 
     if (sendError) {
       console.error('Error sending message:', sendError)
       setError(`Failed to send message: ${sendError.message}`)
-    } else {
-      setNewMessage('')
+      // Remove the optimistic message on error
+      setMessages(prev => prev.filter(m => m.id !== tempId))
+    } else if (data) {
+      // Replace temp message with real one
+      setMessages(prev => prev.map(m => m.id === tempId ? data as Message : m))
     }
     setSending(false)
   }

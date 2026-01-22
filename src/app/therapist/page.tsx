@@ -17,9 +17,20 @@ export default async function TherapistDashboard() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-        <p className="text-slate-600 mt-1">Overview of your patients and their progress</p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+          <p className="text-slate-600 mt-1">Overview of your patients and their progress</p>
+        </div>
+        <Link
+          href="/therapist/profile"
+          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition"
+          title="Profile"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </Link>
       </div>
 
       {/* Stats */}
