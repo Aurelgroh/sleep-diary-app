@@ -74,7 +74,7 @@ export default function InvitePatientPage() {
       const { error: inviteError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/invite?token=${invitation.token}`,
+          emailRedirectTo: `${window.location.origin}/invite/accept?token=${invitation.token}`,
           data: {
             invitation_token: invitation.token,
             role: 'patient',

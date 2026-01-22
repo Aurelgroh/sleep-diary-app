@@ -15,20 +15,15 @@ export default async function Home() {
           <p className="text-lg text-slate-600 mb-8">
             CBT-I therapy management platform for therapists and patients
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/auth/login"
-              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/auth/signup"
-              className="px-6 py-3 bg-white text-slate-700 font-medium rounded-lg border border-slate-300 hover:bg-slate-50 transition"
-            >
-              Register as Therapist
-            </Link>
-          </div>
+          <Link
+            href="/auth/login"
+            className="inline-block px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+          >
+            Sign in
+          </Link>
+          <p className="mt-6 text-sm text-slate-500">
+            Are you a patient? Check your email for an invitation from your therapist.
+          </p>
         </div>
       </div>
     )

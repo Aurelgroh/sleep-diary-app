@@ -127,6 +127,8 @@ export type Database = {
           name: string
           therapist_id: string
           token: string
+          used_at: string | null
+          used_by: string | null
         }
         Insert: {
           created_at?: string
@@ -136,6 +138,8 @@ export type Database = {
           name: string
           therapist_id: string
           token?: string
+          used_at?: string | null
+          used_by?: string | null
         }
         Update: {
           created_at?: string
@@ -145,6 +149,8 @@ export type Database = {
           name?: string
           therapist_id?: string
           token?: string
+          used_at?: string | null
+          used_by?: string | null
         }
         Relationships: [
           {
@@ -251,6 +257,7 @@ export type Database = {
           id: string
           min_sleep_window: number
           name: string
+          onboarding_completed_at: string | null
           status: Database["public"]["Enums"]["patient_status"]
           therapist_id: string
           timezone: string
@@ -264,6 +271,7 @@ export type Database = {
           id: string
           min_sleep_window?: number
           name: string
+          onboarding_completed_at?: string | null
           status?: Database["public"]["Enums"]["patient_status"]
           therapist_id: string
           timezone?: string
@@ -277,6 +285,7 @@ export type Database = {
           id?: string
           min_sleep_window?: number
           name?: string
+          onboarding_completed_at?: string | null
           status?: Database["public"]["Enums"]["patient_status"]
           therapist_id?: string
           timezone?: string
@@ -404,31 +413,67 @@ export type Database = {
           },
         ]
       }
+      therapist_invites: {
+        Row: {
+          id: string
+          email: string
+          name: string
+          credentials: string | null
+          setup_token: string
+          setup_token_expires_at: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          name: string
+          credentials?: string | null
+          setup_token?: string
+          setup_token_expires_at?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          name?: string
+          credentials?: string | null
+          setup_token?: string
+          setup_token_expires_at?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       therapists: {
         Row: {
+          activated_at: string | null
           created_at: string
           credentials: string | null
           email: string
           id: string
           name: string
+          status: Database["public"]["Enums"]["therapist_status"]
           timezone: string
           updated_at: string
         }
         Insert: {
+          activated_at?: string | null
           created_at?: string
           credentials?: string | null
           email: string
           id: string
           name: string
+          status?: Database["public"]["Enums"]["therapist_status"]
           timezone?: string
           updated_at?: string
         }
         Update: {
+          activated_at?: string | null
           created_at?: string
           credentials?: string | null
           email?: string
           id?: string
           name?: string
+          status?: Database["public"]["Enums"]["therapist_status"]
           timezone?: string
           updated_at?: string
         }
@@ -464,6 +509,10 @@ export type Database = {
         | "active"
         | "completed"
         | "archived"
+      therapist_status:
+        | "pending"
+        | "active"
+        | "suspended"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -597,6 +646,11 @@ export const Constants = {
         "active",
         "completed",
         "archived",
+      ],
+      therapist_status: [
+        "pending",
+        "active",
+        "suspended",
       ],
     },
   },

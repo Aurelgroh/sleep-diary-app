@@ -1,153 +1,64 @@
-'use client'
-
-import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [credentials, setCredentials] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
-  const router = useRouter()
-  const supabase = createClient()
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    // Sign up with Supabase Auth
-    // The therapist profile is created automatically via database trigger
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          name,
-          role: 'therapist',
-          credentials: credentials || null,
-        },
-      },
-    })
-
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    if (!authData.user) {
-      setError('Failed to create account')
-      setLoading(false)
-      return
-    }
-
-    setMessage('Account created! Please check your email to confirm your account.')
-    setLoading(false)
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-slate-900">Create Account</h1>
-            <p className="text-slate-600 mt-2">Register as a CBT-I therapist</p>
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-semibold text-slate-900">Therapist Registration</h1>
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {error}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+            <div className="flex gap-3">
+              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="text-sm text-amber-800 font-medium">Admin-Only Registration</p>
+                <p className="text-sm text-amber-700 mt-1">
+                  Therapist accounts are created by administrators only. If you need an account, please contact your organization&apos;s administrator.
+                </p>
+              </div>
             </div>
-          )}
+          </div>
 
-          {message && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-              {message}
-            </div>
-          )}
-
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
-                Full Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="Dr. Jane Smith"
-                required
-              />
+          <div className="space-y-4">
+            <div className="bg-slate-50 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-slate-900 mb-2">Are you a patient?</h3>
+              <p className="text-sm text-slate-600">
+                If you received an invitation email from your therapist, click the link in that email to create your account.
+              </p>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="you@example.com"
-                required
-              />
+            <div className="bg-slate-50 rounded-lg p-4">
+              <h3 className="text-sm font-medium text-slate-900 mb-2">Already have an account?</h3>
+              <p className="text-sm text-slate-600 mb-3">
+                Sign in to access your dashboard.
+              </p>
+              <Link
+                href="/auth/login"
+                className="inline-block px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
+              >
+                Sign In
+              </Link>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="credentials" className="block text-sm font-medium text-slate-700 mb-1">
-                Credentials <span className="text-slate-400">(optional)</span>
-              </label>
-              <input
-                id="credentials"
-                type="text"
-                value={credentials}
-                onChange={(e) => setCredentials(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="PhD, CBSM"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="••••••••"
-                minLength={8}
-                required
-              />
-              <p className="text-xs text-slate-500 mt-1">Minimum 8 characters</p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          <div className="mt-6 pt-6 border-t border-slate-200">
+            <Link
+              href="/"
+              className="flex items-center justify-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition"
             >
-              {loading ? 'Creating account...' : 'Create account'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-slate-600">
-            <span>Already have an account? </span>
-            <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">
-              Sign in
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Home
             </Link>
           </div>
         </div>

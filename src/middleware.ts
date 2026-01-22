@@ -33,7 +33,14 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Public routes that don't require auth
-  const publicRoutes = ['/auth/login', '/auth/signup', '/auth/callback', '/invite']
+  const publicRoutes = [
+    '/auth/login',
+    '/auth/signup',
+    '/auth/callback',
+    '/auth/setup',      // Therapist password setup
+    '/auth/pending',    // Pending activation page
+    '/invite',          // Patient invitation (includes /invite/accept)
+  ]
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
   // If user is not logged in and trying to access protected route
@@ -43,11 +50,36 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // If user is logged in and on auth pages, redirect to home
+  // If user is logged in and on auth pages (except pending/setup), redirect to home
   if (user && (pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup'))) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)
+  }
+
+  // Check therapist status for therapist routes
+  if (user && pathname.startsWith('/therapist')) {
+    const { data: therapist } = await supabase
+      .from('therapists')
+      .select('status')
+      .eq('id', user.id)
+      .single()
+
+    if (therapist) {
+      if (therapist.status === 'pending') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/auth/pending'
+        return NextResponse.redirect(url)
+      }
+
+      if (therapist.status === 'suspended') {
+        // Sign out and redirect to login with message
+        const url = request.nextUrl.clone()
+        url.pathname = '/auth/login'
+        url.searchParams.set('error', 'Your account has been suspended')
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   return supabaseResponse

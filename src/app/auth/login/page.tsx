@@ -19,15 +19,45 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
-    if (error) {
-      setError(error.message)
+    if (signInError) {
+      setError(signInError.message)
       setLoading(false)
       return
+    }
+
+    if (!data.user) {
+      setError('Failed to sign in')
+      setLoading(false)
+      return
+    }
+
+    // Check if user is a therapist and their status
+    const { data: therapist } = await supabase
+      .from('therapists')
+      .select('status')
+      .eq('id', data.user.id)
+      .single()
+
+    if (therapist) {
+      if (therapist.status === 'pending') {
+        // Sign out and redirect to pending page
+        await supabase.auth.signOut()
+        router.push('/auth/pending')
+        return
+      }
+
+      if (therapist.status === 'suspended') {
+        // Sign out and show error
+        await supabase.auth.signOut()
+        setError('Your account has been suspended. Please contact the administrator.')
+        setLoading(false)
+        return
+      }
     }
 
     router.push('/')
@@ -107,7 +137,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="••••••••"
+                placeholder="Enter your password"
               />
             </div>
 
@@ -130,11 +160,13 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="mt-6 text-center text-sm text-slate-600">
-            <span>Therapist? </span>
-            <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
-              Create an account
-            </Link>
+          <div className="mt-6 pt-6 border-t border-slate-200">
+            <p className="text-sm text-slate-600 text-center">
+              <span>Need an account? </span>
+              <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
+                Learn more
+              </Link>
+            </p>
           </div>
         </div>
       </div>
