@@ -21,6 +21,16 @@ export default async function PatientProfilePage() {
     redirect('/')
   }
 
+  // Cast patient to include email_reminders (defaults to true if not set)
+  const patientWithReminders = {
+    id: patient.id,
+    name: patient.name,
+    email: patient.email,
+    timezone: patient.timezone,
+    created_at: patient.created_at,
+    email_reminders: (patient as Record<string, unknown>).email_reminders as boolean ?? true,
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
@@ -28,7 +38,7 @@ export default async function PatientProfilePage() {
       </div>
 
       <PatientProfileClient
-        patient={patient}
+        patient={patientWithReminders}
         therapist={patient.therapists}
         userEmail={user.email || ''}
       />

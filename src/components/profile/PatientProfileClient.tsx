@@ -12,6 +12,7 @@ interface PatientProfileClientProps {
     email: string
     timezone: string
     created_at: string
+    email_reminders: boolean
   }
   therapist: {
     id: string
@@ -27,8 +28,26 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [emailReminders, setEmailReminders] = useState(patient.email_reminders)
+  const [savingReminders, setSavingReminders] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  const handleToggleReminders = async () => {
+    setSavingReminders(true)
+    const newValue = !emailReminders
+
+    // Cast to any to handle column that may not be in generated types yet
+    const { error } = await supabase
+      .from('patients')
+      .update({ email_reminders: newValue } as Record<string, unknown>)
+      .eq('id', patient.id)
+
+    if (!error) {
+      setEmailReminders(newValue)
+    }
+    setSavingReminders(false)
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -129,6 +148,36 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
           </div>
         </div>
       )}
+
+      {/* Notifications */}
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+          <h2 className="text-lg font-semibold text-slate-900">Notifications</h2>
+        </div>
+        <div className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="font-medium text-slate-900">Daily sleep diary reminders</p>
+              <p className="text-sm text-slate-500 mt-1">
+                Receive a friendly email each morning to remind you to log your sleep
+              </p>
+            </div>
+            <button
+              onClick={handleToggleReminders}
+              disabled={savingReminders}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                emailReminders ? 'bg-blue-600' : 'bg-slate-200'
+              } ${savingReminders ? 'opacity-50' : ''}`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  emailReminders ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Data & Privacy */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
