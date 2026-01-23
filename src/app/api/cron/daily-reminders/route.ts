@@ -87,7 +87,8 @@ export async function GET(request: NextRequest) {
 
     let sent = 0
     let skipped = 0
-    const errors: string[] = []
+    const errors: { email: string; error: string }[] = []
+    const sentTo: string[] = []
 
     for (const patient of patients) {
       // Skip if already logged today
@@ -120,21 +121,23 @@ export async function GET(request: NextRequest) {
 
         if (emailError) {
           console.error(`Failed to send to ${patient.email}:`, emailError)
-          errors.push(patient.email)
+          errors.push({ email: patient.email, error: emailError.message })
         } else {
           sent++
+          sentTo.push(patient.email)
         }
       } catch (err) {
         console.error(`Error sending to ${patient.email}:`, err)
-        errors.push(patient.email)
+        errors.push({ email: patient.email, error: err instanceof Error ? err.message : 'Unknown error' })
       }
     }
 
     return NextResponse.json({
       success: true,
       sent,
+      sentTo,
       skipped,
-      errors: errors.length,
+      errors,
       total: patients.length
     })
   } catch (error) {
