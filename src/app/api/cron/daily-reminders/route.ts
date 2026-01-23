@@ -90,6 +90,9 @@ export async function GET(request: NextRequest) {
     const errors: { email: string; error: string }[] = []
     const sentTo: string[] = []
 
+    // Helper to delay between emails (Resend free tier: 2 req/sec)
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
     for (const patient of patients) {
       // Skip if already logged today
       if (patientsWhoLogged.has(patient.id)) {
@@ -130,6 +133,9 @@ export async function GET(request: NextRequest) {
         console.error(`Error sending to ${patient.email}:`, err)
         errors.push({ email: patient.email, error: err instanceof Error ? err.message : 'Unknown error' })
       }
+
+      // Rate limit: wait 600ms between emails (safe for 2 req/sec limit)
+      await delay(600)
     }
 
     return NextResponse.json({
