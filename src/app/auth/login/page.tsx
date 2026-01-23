@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { getAuthErrorMessage } from '@/lib/utils/errors'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -25,13 +26,13 @@ export default function LoginPage() {
     })
 
     if (signInError) {
-      setError(signInError.message)
+      setError(getAuthErrorMessage(signInError))
       setLoading(false)
       return
     }
 
     if (!data.user) {
-      setError('Failed to sign in')
+      setError('Unable to sign in. Please check your credentials and try again.')
       setLoading(false)
       return
     }
@@ -81,7 +82,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(getAuthErrorMessage(error))
       setLoading(false)
       return
     }

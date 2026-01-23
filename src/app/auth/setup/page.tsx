@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { getAuthErrorMessage, getUnexpectedErrorMessage } from '@/lib/utils/errors'
 
 type SetupStep = 'loading' | 'error' | 'setup' | 'success'
 
@@ -118,14 +119,14 @@ function SetupContent() {
         if (signUpError.message.includes('already registered')) {
           setError('An account with this email already exists. Please log in instead.')
         } else {
-          setError(signUpError.message)
+          setError(getAuthErrorMessage(signUpError))
         }
         setLoading(false)
         return
       }
 
       if (!authData.user) {
-        setError('Failed to create account')
+        setError('Unable to create your account. Please try again or contact support.')
         setLoading(false)
         return
       }
@@ -160,7 +161,7 @@ function SetupContent() {
         setStep('success')
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError(getUnexpectedErrorMessage())
       setLoading(false)
     }
   }

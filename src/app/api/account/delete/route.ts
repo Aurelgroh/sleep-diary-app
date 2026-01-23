@@ -8,6 +8,23 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function DELETE(request: NextRequest) {
   try {
+    // CSRF Protection: Verify request origin
+    const origin = request.headers.get('origin')
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sleep-diary-app.vercel.app'
+    const allowedOrigins = [
+      appUrl,
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ]
+
+    if (origin && !allowedOrigins.some(allowed => origin.startsWith(allowed.replace(/\/$/, '')))) {
+      console.error('CSRF: Invalid origin for account deletion:', origin)
+      return NextResponse.json(
+        { error: 'Request origin not allowed' },
+        { status: 403 }
+      )
+    }
+
     const { user_id, user_type } = await request.json()
 
     if (!user_id || !user_type) {
