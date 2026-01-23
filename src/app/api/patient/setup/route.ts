@@ -57,6 +57,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // CRITICAL: Validate therapist_id matches the invitation
+    if (therapist_id !== invitation.therapist_id) {
+      console.error('Therapist ID mismatch:', { provided: therapist_id, expected: invitation.therapist_id })
+      return NextResponse.json(
+        { error: 'Invalid therapist for this invitation' },
+        { status: 400 }
+      )
+    }
+
+    // CRITICAL: Atomically mark invitation as used to prevent race condition
+    // This UPDATE only succeeds if used_at is still NULL
+    const { data: claimedInvitation, error: claimError } = await supabaseAdmin
+      .from('invitations')
+      .update({ used_at: new Date().toISOString(), used_by: user_id })
+      .eq('id', invitation_id)
+      .is('used_at', null)
+      .select()
+      .single()
+
+    if (claimError || !claimedInvitation) {
+      // Another request already claimed this invitation
+      return NextResponse.json(
+        { error: 'Invitation has already been used' },
+        { status: 400 }
+      )
+    }
+
     // Check if patient already exists
     const { data: existing } = await supabaseAdmin
       .from('patients')
@@ -65,12 +92,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (existing) {
-      // Already exists, just clean up invitation
-      await supabaseAdmin
-        .from('invitations')
-        .update({ used_at: new Date().toISOString(), used_by: user_id })
-        .eq('id', invitation_id)
-
+      // Already exists - invitation is already marked as used
       return NextResponse.json({ success: true, message: 'Patient already exists' })
     }
 
@@ -87,18 +109,18 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error('Failed to create patient:', insertError)
+      // Rollback: un-mark the invitation so user can retry
+      await supabaseAdmin
+        .from('invitations')
+        .update({ used_at: null, used_by: null })
+        .eq('id', invitation_id)
       return NextResponse.json(
-        { error: 'Failed to create patient record' },
+        { error: 'Failed to create patient record. Please try again.' },
         { status: 500 }
       )
     }
 
-    // Mark invitation as used
-    await supabaseAdmin
-      .from('invitations')
-      .update({ used_at: new Date().toISOString(), used_by: user_id })
-      .eq('id', invitation_id)
-
+    // Invitation already marked as used atomically above
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Patient setup error:', error)
