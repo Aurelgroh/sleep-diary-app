@@ -36,33 +36,49 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
   const router = useRouter()
   const supabase = createClient()
 
+  const [reminderError, setReminderError] = useState<string | null>(null)
+
   const handleToggleReminders = async () => {
-    setSavingReminders(true)
+    const previousValue = emailReminders
     const newValue = !emailReminders
+    setEmailReminders(newValue) // Optimistic update
+    setSavingReminders(true)
+    setReminderError(null)
 
     // Cast to any to handle column that may not be in generated types yet
-    const { error } = await supabase
+    const { error: saveError } = await supabase
       .from('patients')
       .update({ email_reminders: newValue } as Record<string, unknown>)
       .eq('id', patient.id)
 
-    if (!error) {
-      setEmailReminders(newValue)
+    if (saveError) {
+      console.error('Failed to save reminder setting:', saveError)
+      setEmailReminders(previousValue) // Rollback on error
+      setReminderError('Failed to save. Please try again.')
+      setTimeout(() => setReminderError(null), 3000)
     }
     setSavingReminders(false)
   }
 
-  const handleTimeChange = async (newTime: string) => {
-    setReminderTime(newTime)
-    setSavingTime(true)
+  const [timeError, setTimeError] = useState<string | null>(null)
 
-    const { error } = await supabase
+  const handleTimeChange = async (newTime: string) => {
+    const previousTime = reminderTime
+    setReminderTime(newTime) // Optimistic update
+    setSavingTime(true)
+    setTimeError(null)
+
+    const { error: saveError } = await supabase
       .from('patients')
       .update({ reminder_time: newTime } as Record<string, unknown>)
       .eq('id', patient.id)
 
-    if (error) {
-      console.error('Failed to save reminder time:', error)
+    if (saveError) {
+      console.error('Failed to save reminder time:', saveError)
+      setReminderTime(previousTime) // Rollback on error
+      setTimeError('Failed to save. Please try again.')
+      // Clear error after 3 seconds
+      setTimeout(() => setTimeError(null), 3000)
     }
     setSavingTime(false)
   }
@@ -194,6 +210,9 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
               />
             </button>
           </div>
+          {reminderError && (
+            <p className="text-red-500 text-sm mt-2">{reminderError}</p>
+          )}
 
           {/* Reminder time picker - only show when reminders enabled */}
           {emailReminders && (
@@ -207,6 +226,9 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
               <div className="flex items-center gap-2">
                 {savingTime && (
                   <span className="text-xs text-slate-400">Saving...</span>
+                )}
+                {timeError && (
+                  <span className="text-xs text-red-500">{timeError}</span>
                 )}
                 <select
                   value={reminderTime}

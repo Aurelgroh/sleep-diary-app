@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { escapeHtml } from '@/lib/utils/html'
 
 // This API sends daily sleep diary reminder emails
 // Runs hourly and sends to patients whose reminder_time matches current hour in their timezone
@@ -136,10 +137,14 @@ export async function GET(request: NextRequest) {
       const therapistName = therapistData?.name || 'your therapist'
       const firstName = patient.name.split(' ')[0]
 
+      // Escape user-provided data to prevent HTML injection
+      const safeFirstName = escapeHtml(firstName)
+      const safeTherapistName = escapeHtml(therapistName)
+
       // Build personalized email
       const emailHtml = buildReminderEmail({
-        firstName,
-        therapistName,
+        firstName: safeFirstName,
+        therapistName: safeTherapistName,
         prescription,
         appUrl
       })
@@ -148,7 +153,7 @@ export async function GET(request: NextRequest) {
         const { error: emailError } = await resend.emails.send({
           from: emailFrom,
           to: patient.email,
-          subject: `Good morning, ${firstName}! Time to log your sleep`,
+          subject: `Good morning, ${safeFirstName}! Time to log your sleep`,
           html: emailHtml
         })
 

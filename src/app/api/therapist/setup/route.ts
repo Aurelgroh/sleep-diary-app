@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     // Verify the invite exists and matches
     const { data: invite, error: inviteError } = await supabaseAdmin
       .from('therapist_invites')
-      .select('id, email')
+      .select('id, email, setup_token_expires_at')
       .eq('id', invite_id)
       .eq('email', email)
       .single()
@@ -33,6 +33,14 @@ export async function POST(request: NextRequest) {
     if (inviteError || !invite) {
       return NextResponse.json(
         { error: 'Invalid invitation' },
+        { status: 400 }
+      )
+    }
+
+    // Check if token has expired
+    if (invite.setup_token_expires_at && new Date(invite.setup_token_expires_at) < new Date()) {
+      return NextResponse.json(
+        { error: 'This invitation link has expired. Please contact the administrator for a new link.' },
         { status: 400 }
       )
     }

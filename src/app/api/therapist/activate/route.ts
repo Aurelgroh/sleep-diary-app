@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { escapeHtml } from '@/lib/utils/html'
 
 // This API is called by admin to send activation emails to therapists
 // Requires SUPABASE_SERVICE_ROLE_KEY environment variable
@@ -95,6 +96,9 @@ export async function POST(request: NextRequest) {
         const { Resend } = await import('resend')
         const resend = new Resend(process.env.RESEND_API_KEY)
 
+        // Escape user-provided data to prevent HTML injection
+        const safeName = escapeHtml(invite.name)
+
         const { error: emailError } = await resend.emails.send({
           from: process.env.EMAIL_FROM || 'SleepDiary <noreply@auth.patientlearningsystems.com>',
           to: invite.email,
@@ -102,7 +106,7 @@ export async function POST(request: NextRequest) {
           html: `
             <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
               <h1 style="color: #1e293b;">Welcome to SleepDiary!</h1>
-              <p style="color: #475569;">Hi ${invite.name},</p>
+              <p style="color: #475569;">Hi ${safeName},</p>
               <p style="color: #475569;">Your therapist account has been created. Click the button below to set your password and complete your account setup.</p>
               <div style="margin: 32px 0;">
                 <a href="${setupUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
