@@ -259,23 +259,23 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       <div className="space-y-6">
         {/* Congratulations header */}
         <div className="text-center py-8">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900">Ready to Submit!</h2>
-          <p className="text-slate-600 mt-2">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Ready to Submit!</h2>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">
             Your sleep diary entry is ready to be saved.
           </p>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 dark:text-slate-500 text-sm mt-1">
             Your therapist will review your progress.
           </p>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-red-700 text-sm">{error}</p>
+          <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl">
+            <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
           </div>
         )}
 
@@ -284,7 +284,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
           <button
             type="button"
             onClick={handleBack}
-            className="flex-1 py-4 px-6 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors"
+            className="flex-1 py-4 px-6 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
             Edit Answers
           </button>
@@ -305,14 +305,14 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
   if (existingEntry) {
     return (
       <div className="text-center py-12 space-y-6">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto">
+          <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Already Logged Today</h2>
-          <p className="text-slate-600 mt-2">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Already Logged Today</h2>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">
             You&apos;ve already recorded your sleep for last night.
           </p>
         </div>
@@ -331,11 +331,11 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
     <div className="space-y-6">
       {/* Progress Bar */}
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-slate-500">
+        <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
           <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-600 transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -345,29 +345,29 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
 
       {/* Category Header */}
       {currentCategory && (
-        <div className="bg-slate-50 rounded-xl p-4">
-          <h3 className="font-semibold text-slate-900">{currentCategory.title}</h3>
-          <p className="text-sm text-slate-500">{currentCategory.description}</p>
+        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">{currentCategory.title}</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{currentCategory.description}</p>
         </div>
       )}
 
       {/* Question */}
       {currentQuestion && (
         <div className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-900">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
             {getDynamicQuestionText(currentQuestion, answers)}
           </h2>
 
           {currentQuestion.helperText && (
-            <p className="text-sm text-slate-500">{currentQuestion.helperText}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{currentQuestion.helperText}</p>
           )}
 
           {renderQuestionInput(currentQuestion)}
 
           {/* Inline validation warning */}
           {warning && (
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-              <p className="text-amber-700 text-sm flex items-center gap-2">
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-xl">
+              <p className="text-amber-700 dark:text-amber-300 text-sm flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
@@ -384,7 +384,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
           <button
             type="button"
             onClick={handleBack}
-            className="flex-1 py-4 px-6 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition-colors"
+            className="flex-1 py-4 px-6 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
             Back
           </button>

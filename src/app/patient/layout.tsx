@@ -27,9 +27,9 @@ export default async function PatientLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 z-10">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24">
+      {/* Header - using fixed-header class for mobile stability */}
+      <header className="fixed-header fixed top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 z-50 safe-top">
         <div>
           <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">SleepDiary</h1>
         </div>
@@ -54,8 +54,8 @@ export default async function PatientLayout({
         </div>
       </main>
 
-      {/* Bottom navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-around px-4 z-10">
+      {/* Bottom navigation - using fixed-footer class for mobile stability */}
+      <nav className="fixed-footer fixed bottom-0 left-0 right-0 h-20 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-around px-4 z-50 safe-bottom">
         <Link
           href="/patient"
           className="flex flex-col items-center gap-1 p-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition"

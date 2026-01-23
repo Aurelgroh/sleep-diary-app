@@ -49,6 +49,58 @@ html.theme-transition *::after {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
 }
 
+/* Mobile viewport fixes */
+html {
+  /* Use dvh for mobile to handle browser chrome properly */
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+  /* Prevent pull-to-refresh and overscroll bounce on iOS */
+  overscroll-behavior-y: none;
+}
+
+/* Fixed element stability - prevent jumping on mobile */
+.fixed-stable {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Safe area padding for notched devices */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Prevent iOS keyboard from pushing fixed elements */
+@supports (-webkit-touch-callout: none) {
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  .fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 /* Hide scrollbar for picker wheels */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -57,4 +109,11 @@ html.theme-transition *::after {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Input focus handling for mobile - prevent zoom on iOS */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
