@@ -13,6 +13,7 @@ interface PatientProfileClientProps {
     timezone: string
     created_at: string
     email_reminders: boolean
+    reminder_time: string
   }
   therapist: {
     id: string
@@ -29,7 +30,9 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [emailReminders, setEmailReminders] = useState(patient.email_reminders)
+  const [reminderTime, setReminderTime] = useState(patient.reminder_time.slice(0, 5)) // "09:00"
   const [savingReminders, setSavingReminders] = useState(false)
+  const [savingTime, setSavingTime] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -47,6 +50,21 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
       setEmailReminders(newValue)
     }
     setSavingReminders(false)
+  }
+
+  const handleTimeChange = async (newTime: string) => {
+    setReminderTime(newTime)
+    setSavingTime(true)
+
+    const { error } = await supabase
+      .from('patients')
+      .update({ reminder_time: newTime } as Record<string, unknown>)
+      .eq('id', patient.id)
+
+    if (error) {
+      console.error('Failed to save reminder time:', error)
+    }
+    setSavingTime(false)
   }
 
   const handleLogout = async () => {
@@ -176,6 +194,37 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
               />
             </button>
           </div>
+
+          {/* Reminder time picker - only show when reminders enabled */}
+          {emailReminders && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+              <div className="flex-1">
+                <p className="font-medium text-slate-900">Reminder time</p>
+                <p className="text-sm text-slate-500 mt-1">
+                  When would you like to receive your daily reminder?
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {savingTime && (
+                  <span className="text-xs text-slate-400">Saving...</span>
+                )}
+                <select
+                  value={reminderTime}
+                  onChange={(e) => handleTimeChange(e.target.value)}
+                  disabled={savingTime}
+                  className="px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                >
+                  <option value="06:00">6:00 AM</option>
+                  <option value="07:00">7:00 AM</option>
+                  <option value="08:00">8:00 AM</option>
+                  <option value="09:00">9:00 AM</option>
+                  <option value="10:00">10:00 AM</option>
+                  <option value="11:00">11:00 AM</option>
+                  <option value="12:00">12:00 PM</option>
+                </select>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

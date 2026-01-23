@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 // This API sends daily sleep diary reminder emails
-// Should be called by a cron job each morning (e.g., 8am in each timezone)
+// Runs hourly and sends to patients whose reminder_time matches current hour in their timezone
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,16 +21,19 @@ export async function GET(request: NextRequest) {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    const today = new Date().toISOString().split('T')[0]
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
 
     // Get all patients with reminders enabled
-    const { data: patients, error: patientsError } = await supabase
+    const { data: allPatients, error: patientsError } = await supabase
       .from('patients')
       .select(`
         id,
         name,
         email,
         status,
+        timezone,
+        reminder_time,
         therapists(name)
       `)
       .eq('email_reminders', true)
@@ -41,8 +44,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch patients' }, { status: 500 })
     }
 
-    if (!patients || patients.length === 0) {
+    if (!allPatients || allPatients.length === 0) {
       return NextResponse.json({ message: 'No patients to remind', sent: 0 })
+    }
+
+    // Filter patients to only those whose current local time matches their reminder time
+    const patients = allPatients.filter(patient => {
+      try {
+        // Get current hour in patient's timezone
+        const patientLocalTime = new Date(now.toLocaleString('en-US', { timeZone: patient.timezone }))
+        const currentHour = patientLocalTime.getHours()
+
+        // Parse reminder_time (format: "09:00" or "09:00:00")
+        const reminderHour = parseInt((patient.reminder_time as string)?.split(':')[0] || '9')
+
+        return currentHour === reminderHour
+      } catch {
+        // If timezone is invalid, default to checking against UTC
+        const currentHourUTC = now.getUTCHours()
+        const reminderHour = parseInt((patient.reminder_time as string)?.split(':')[0] || '9')
+        return currentHourUTC === reminderHour
+      }
+    })
+
+    if (patients.length === 0) {
+      return NextResponse.json({
+        message: 'No patients due for reminders this hour',
+        totalWithReminders: allPatients.length,
+        sent: 0
+      })
     }
 
     // Get today's diary entries to exclude patients who already logged
