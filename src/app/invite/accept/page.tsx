@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { TermsConsent } from '@/components/auth/TermsConsent'
 import { OnboardingTutorial } from '@/components/onboarding/OnboardingTutorial'
+import { getBrowserTimezone } from '@/lib/utils/timezone'
 
 type AcceptStep = 'loading' | 'error' | 'existing-user' | 'create-account' | 'tutorial'
 
@@ -151,6 +152,7 @@ function AcceptContent() {
           name: invite.name,
           therapist_id: invite.therapist_id,
           invitation_id: invite.id,
+          timezone: getBrowserTimezone(),
         }),
       })
 
@@ -251,6 +253,7 @@ function AcceptContent() {
           name: editedName,
           therapist_id: invitation.therapist_id,
           invitation_id: invitation.id,
+          timezone: getBrowserTimezone(),
         }),
       })
 

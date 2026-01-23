@@ -47,7 +47,12 @@ export function ChatSection({ patientId, currentUserId, patientName }: ChatSecti
           }
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.error('Unread count subscription error:', err)
+          // Silently fail - unread badge is not critical
+        }
+      })
 
     return () => {
       supabase.removeChannel(channel)

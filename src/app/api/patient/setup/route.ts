@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { sanitizeTimezone } from '@/lib/utils/timezone'
 
 // This API handles patient account setup after signup
 // Uses service role to bypass RLS for inserting patient record
@@ -7,9 +8,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { user_id, email, name, therapist_id, invitation_id } = body
+    const { user_id, email, name, therapist_id, invitation_id, timezone } = body
 
-    console.log('Patient setup API called with:', { user_id, email, name, therapist_id, invitation_id })
+    console.log('Patient setup API called with:', { user_id, email, name, therapist_id, invitation_id, timezone })
+
+    // Validate and sanitize timezone (falls back to UTC if invalid)
+    const validTimezone = sanitizeTimezone(timezone)
 
     if (!user_id || !email || !name || !therapist_id || !invitation_id) {
       console.error('Missing required fields:', { user_id: !!user_id, email: !!email, name: !!name, therapist_id: !!therapist_id, invitation_id: !!invitation_id })
@@ -96,7 +100,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: 'Patient already exists' })
     }
 
-    // Create the patient record
+    // Create the patient record with validated timezone
     const { error: insertError } = await supabaseAdmin
       .from('patients')
       .insert({
@@ -105,6 +109,7 @@ export async function POST(request: NextRequest) {
         name,
         therapist_id,
         status: 'baseline',
+        timezone: validTimezone,
       })
 
     if (insertError) {

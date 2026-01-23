@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { Json } from '@/lib/supabase/database.types'
@@ -43,6 +43,9 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
   const [error, setError] = useState<string | null>(null)
   const [warning, setWarning] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Ref to prevent duplicate submissions from rapid clicks
+  const submissionInProgress = useRef(false)
 
   // Get visible questions based on current answers
   const visibleQuestions = useMemo(() => {
@@ -114,6 +117,11 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
   }
 
   const handleSubmit = async () => {
+    // Prevent duplicate submissions using ref (handles rapid clicks before state updates)
+    if (submissionInProgress.current || isSubmitting) {
+      return
+    }
+    submissionInProgress.current = true
     setIsSubmitting(true)
     setError(null)
 
@@ -126,6 +134,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       if (!timeValidation.valid) {
         setError(timeValidation.errors.join('. '))
         setIsSubmitting(false)
+        submissionInProgress.current = false
         return
       }
 
@@ -134,6 +143,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       if (!outOfBedValidation.valid) {
         setError(outOfBedValidation.errors.join('. '))
         setIsSubmitting(false)
+        submissionInProgress.current = false
         return
       }
 
@@ -168,14 +178,16 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
           setError(insertError.message)
         }
         setIsSubmitting(false)
+        submissionInProgress.current = false
         return
       }
 
-      // Success - redirect to diary page
+      // Success - redirect to diary page (don't reset submissionInProgress to prevent re-submission)
       router.push('/patient/diary?success=true')
     } catch (err) {
       setError('An unexpected error occurred. Please try again.')
       setIsSubmitting(false)
+      submissionInProgress.current = false
     }
   }
 
@@ -280,7 +292,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-4 px-6 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50"
+            className="flex-1 py-4 px-6 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Saving...' : 'Save Entry'}
           </button>
