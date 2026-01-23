@@ -141,8 +141,15 @@ export async function GET(request: NextRequest) {
       const safeFirstName = escapeHtml(firstName)
       const safeTherapistName = escapeHtml(therapistName)
 
-      // Build personalized email
+      // Build personalized email (HTML and plain text)
       const emailHtml = buildReminderEmail({
+        firstName: safeFirstName,
+        therapistName: safeTherapistName,
+        prescription,
+        appUrl
+      })
+
+      const emailText = buildReminderEmailText({
         firstName: safeFirstName,
         therapistName: safeTherapistName,
         prescription,
@@ -153,7 +160,8 @@ export async function GET(request: NextRequest) {
         const { error: emailError } = await resend.emails.send({
           from: emailFrom,
           to: patient.email,
-          subject: `Good morning, ${safeFirstName}! Time to log your sleep`,
+          subject: `Good morning, ${safeFirstName} - Time to log your sleep`,
+          text: emailText,
           html: emailHtml
         })
 
@@ -286,4 +294,49 @@ function buildReminderEmail({
     </body>
     </html>
   `
+}
+
+function buildReminderEmailText({
+  firstName,
+  therapistName,
+  prescription,
+  appUrl
+}: {
+  firstName: string
+  therapistName: string
+  prescription?: { bedtime: string; wake_time: string }
+  appUrl: string
+}): string {
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':')
+    const hour = parseInt(hours)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${minutes} ${ampm}`
+  }
+
+  const prescriptionSection = prescription ? `
+YOUR SLEEP SCHEDULE
+Bedtime: ${formatTime(prescription.bedtime)}
+Wake time: ${formatTime(prescription.wake_time)}
+
+Sticking to your sleep window helps build a stronger sleep drive and improves sleep quality over time.
+` : ''
+
+  return `Good morning, ${firstName}!
+
+This is a gentle reminder to log last night's sleep in your diary. Taking a moment to record how you slept helps ${therapistName} understand your progress and adjust your sleep plan as needed.
+
+Log your sleep here: ${appUrl}/patient/diary/new
+
+It only takes about 2 minutes!
+${prescriptionSection}
+QUICK TIPS FOR TODAY
+- Try to avoid napping during the day (unless needed for safety, like driving)
+- Get some natural light exposure, especially in the morning
+- Stay active but avoid intense exercise close to bedtime
+
+---
+You're receiving this because you have daily reminders enabled.
+Manage your settings: ${appUrl}/patient/profile`
 }

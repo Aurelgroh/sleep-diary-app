@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Verify the user is a therapist
     const { data: therapist } = await supabase
       .from('therapists')
-      .select('id, name')
+      .select('id, name, email')
       .eq('id', user.id)
       .single()
 
@@ -89,30 +89,74 @@ export async function POST(request: NextRequest) {
 
         const { error: emailError } = await resend.emails.send({
           from: process.env.EMAIL_FROM || 'SleepDiary <noreply@auth.patientlearningsystems.com>',
+          replyTo: therapist.email || undefined,
           to: email,
-          subject: `${safeTherapistName} invited you to SleepDiary`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-              <h1 style="color: #1e293b;">You're Invited to SleepDiary!</h1>
-              <p style="color: #475569;">Hi ${safeName},</p>
-              <p style="color: #475569;"><strong>${safeTherapistName}</strong> has invited you to join SleepDiary to support your sleep therapy journey.</p>
-              <p style="color: #475569;">With SleepDiary, you'll be able to:</p>
-              <ul style="color: #475569;">
+          subject: `${safeTherapistName} has invited you to join SleepDiary`,
+          // Plain text version improves deliverability
+          text: `Hi ${safeName},
+
+${safeTherapistName} has invited you to join SleepDiary to support your sleep therapy journey.
+
+With SleepDiary, you can:
+- Track your sleep patterns daily
+- Share your progress with your therapist
+- Get personalized sleep recommendations
+
+Create your account here: ${inviteUrl}
+
+This invitation link will expire in 7 days.
+
+If you didn't expect this email, you can safely ignore it.
+
+---
+SleepDiary - Sleep Therapy Management
+This email was sent because ${safeTherapistName} invited you to SleepDiary.`,
+          html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're invited to SleepDiary</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="padding: 40px;">
+              <h1 style="color: #1e293b; font-size: 24px; margin: 0 0 24px 0;">You're invited to SleepDiary</h1>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">Hi ${safeName},</p>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;"><strong>${safeTherapistName}</strong> has invited you to join SleepDiary to support your sleep therapy journey.</p>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 8px 0;">With SleepDiary, you can:</p>
+              <ul style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0; padding-left: 20px;">
                 <li>Track your sleep patterns daily</li>
                 <li>Share your progress with your therapist</li>
                 <li>Get personalized sleep recommendations</li>
               </ul>
-              <div style="margin: 32px 0;">
-                <a href="${inviteUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
-                  Create Your Account
-                </a>
-              </div>
-              <p style="color: #64748b; font-size: 14px;">This invitation link will expire in 7 days.</p>
-              <p style="color: #64748b; font-size: 14px;">If you didn't expect this email, you can safely ignore it.</p>
-              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-              <p style="color: #94a3b8; font-size: 12px;">SleepDiary - CBT-I Therapy Management</p>
-            </div>
-          `,
+              <table role="presentation" cellspacing="0" cellpadding="0" style="margin: 32px 0;">
+                <tr>
+                  <td style="background-color: #2563eb; border-radius: 8px;">
+                    <a href="${inviteUrl}" style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Create Your Account</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">This invitation link will expire in 7 days.</p>
+              <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0;">If you didn't expect this email, you can safely ignore it.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 24px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+              <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 0;">SleepDiary - Sleep Therapy Management</p>
+              <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 8px 0 0 0;">This email was sent because ${safeTherapistName} invited you to SleepDiary.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
         })
 
         if (emailError) {

@@ -103,22 +103,57 @@ export async function POST(request: NextRequest) {
           from: process.env.EMAIL_FROM || 'SleepDiary <noreply@auth.patientlearningsystems.com>',
           to: invite.email,
           subject: 'Set up your SleepDiary therapist account',
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-              <h1 style="color: #1e293b;">Welcome to SleepDiary!</h1>
-              <p style="color: #475569;">Hi ${safeName},</p>
-              <p style="color: #475569;">Your therapist account has been created. Click the button below to set your password and complete your account setup.</p>
-              <div style="margin: 32px 0;">
-                <a href="${setupUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
-                  Set Up Account
-                </a>
-              </div>
-              <p style="color: #64748b; font-size: 14px;">This link will expire in 30 days.</p>
-              <p style="color: #64748b; font-size: 14px;">If you didn't expect this email, you can safely ignore it.</p>
-              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
-              <p style="color: #94a3b8; font-size: 12px;">SleepDiary - CBT-I Therapy Management</p>
-            </div>
-          `,
+          text: `Hi ${safeName},
+
+Your therapist account has been created. Visit the link below to set your password and complete your account setup.
+
+Set up your account: ${setupUrl}
+
+This link will expire in 30 days.
+
+If you didn't expect this email, you can safely ignore it.
+
+---
+SleepDiary - Sleep Therapy Management`,
+          html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set up your SleepDiary account</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <tr>
+            <td style="padding: 40px;">
+              <h1 style="color: #1e293b; font-size: 24px; margin: 0 0 24px 0;">Welcome to SleepDiary</h1>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">Hi ${safeName},</p>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">Your therapist account has been created. Click the button below to set your password and complete your account setup.</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" style="margin: 32px 0;">
+                <tr>
+                  <td style="background-color: #2563eb; border-radius: 8px;">
+                    <a href="${setupUrl}" style="display: inline-block; padding: 14px 28px; color: #ffffff; text-decoration: none; font-weight: 500; font-size: 16px;">Set Up Account</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">This link will expire in 30 days.</p>
+              <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0;">If you didn't expect this email, you can safely ignore it.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 24px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0;">
+              <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 0;">SleepDiary - Sleep Therapy Management</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`,
         })
 
         if (emailError) {
