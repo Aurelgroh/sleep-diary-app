@@ -69,11 +69,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setResolvedTheme(applyTheme(newTheme))
   }, [])
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <>{children}</>
-  }
-
+  // Always provide context - use default values before mount to prevent hydration issues
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
       {children}
