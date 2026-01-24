@@ -268,7 +268,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
           <p className="text-slate-600 dark:text-slate-400 mt-2">
             Your sleep diary entry is ready to be saved.
           </p>
-          <p className="text-slate-500 dark:text-slate-500 text-sm mt-1">
+          <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">
             Your therapist will review your progress.
           </p>
         </div>
@@ -331,11 +331,18 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
     <div className="space-y-6">
       {/* Progress Bar */}
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
-          <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
-          <span>{Math.round(progress)}%</span>
+        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400">
+          <span id="progress-label">Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+          <span aria-hidden="true">{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div 
+          role="progressbar" 
+          aria-valuenow={Math.round(progress)} 
+          aria-valuemin={0} 
+          aria-valuemax={100}
+          aria-labelledby="progress-label"
+          className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"
+        >
           <div
             className="h-full bg-blue-600 transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -347,7 +354,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
       {currentCategory && (
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
           <h3 className="font-semibold text-slate-900 dark:text-slate-100">{currentCategory.title}</h3>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{currentCategory.description}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{currentCategory.description}</p>
         </div>
       )}
 
@@ -359,7 +366,7 @@ export function DiaryEntryForm({ patientId, existingEntry }: DiaryEntryFormProps
           </h2>
 
           {currentQuestion.helperText && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">{currentQuestion.helperText}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{currentQuestion.helperText}</p>
           )}
 
           {renderQuestionInput(currentQuestion)}

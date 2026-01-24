@@ -117,3 +117,66 @@ body {
     font-size: 16px !important;
   }
 }
+
+/* ================================================
+   WCAG 2.1 AA Accessibility Utilities
+   ================================================ */
+
+/* Screen reader only - visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus visible - show only on keyboard focus */
+.focus-visible-ring:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Skip link styles */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 4px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 4px;
+}
+
+/* Minimum touch target size (44x44px) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Focus ring utility for interactive elements */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast focus for dark mode */
+.dark .focus-ring:focus-visible {
+  outline-color: #60a5fa;
+}

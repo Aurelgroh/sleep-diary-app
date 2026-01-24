@@ -51,15 +51,23 @@ export function ChartTabs({ entries, isiScores = [] }: ChartTabsProps) {
   return (
     <div className="space-y-4">
       {/* Tab navigation */}
-      <div className="flex overflow-x-auto gap-1 pb-2">
+      <div 
+        role="tablist" 
+        aria-label="Chart type selection"
+        className="flex overflow-x-auto gap-1 pb-2"
+      >
         {TABS.map(tab => (
           <button
             key={tab.id}
+            role="tab"
+            id={`tab-${tab.id}`}
+            aria-selected={activeTab === tab.id}
+            aria-controls={`tabpanel-${tab.id}`}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition min-h-[44px] focus-ring ${
               activeTab === tab.id
                 ? 'bg-blue-600 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
             {tab.label}
@@ -68,7 +76,12 @@ export function ChartTabs({ entries, isiScores = [] }: ChartTabsProps) {
       </div>
 
       {/* Chart content */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
+      <div 
+        role="tabpanel"
+        id={`tabpanel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+        className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4"
+      >
         {activeTab === 'se' && <SEChart entries={entries} />}
         {activeTab === 'duration' && <SleepDurationChart entries={entries} />}
         {activeTab === 'wake' && <WakeComponentsChart entries={entries} />}

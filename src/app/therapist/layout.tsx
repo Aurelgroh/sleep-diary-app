@@ -8,7 +8,7 @@ async function SignOutButton() {
     <form action="/auth/signout" method="post">
       <button
         type="submit"
-        className="w-full text-left px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+        className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px]"
       >
         Sign out
       </button>
@@ -46,28 +46,28 @@ export default async function TherapistLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-            <Link href="/therapist" className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+            <Link href="/therapist" className="text-xl font-semibold text-slate-900 dark:text-slate-100 focus-ring rounded">
               SleepDiary
             </Link>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Therapist Portal</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">Therapist Portal</p>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
+          <nav aria-label="Main navigation" className="flex-1 p-4 space-y-1">
             <Link
               href="/therapist"
-              className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px]"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
               </svg>
               Dashboard
             </Link>
             <Link
               href="/therapist/patients"
-              className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px]"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               Patients
@@ -79,7 +79,7 @@ export default async function TherapistLayout({
             <div className="flex items-center justify-between px-4 py-2">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{therapist.name}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{therapist.email}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{therapist.email}</p>
               </div>
               <ThemeToggle />
             </div>
@@ -90,16 +90,17 @@ export default async function TherapistLayout({
 
       {/* Mobile header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 z-10">
-        <Link href="/therapist" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <Link href="/therapist" className="text-lg font-semibold text-slate-900 dark:text-slate-100 focus-ring rounded">
           SleepDiary
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link
             href="/therapist/patients"
-            className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+            aria-label="Patients"
+            className="p-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg focus-ring min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </Link>
@@ -107,7 +108,7 @@ export default async function TherapistLayout({
       </header>
 
       {/* Main content */}
-      <main className="md:ml-64 pt-16 md:pt-0 min-h-screen">
+      <main id="main-content" className="md:ml-64 pt-16 md:pt-0 min-h-screen">
         <div className="p-6">
           {children}
         </div>

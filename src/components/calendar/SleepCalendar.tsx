@@ -117,73 +117,79 @@ export function SleepCalendar({ entries }: SleepCalendarProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={goToPrevMonth}
-            className="p-2 hover:bg-slate-100 rounded-lg transition"
+            aria-label="Previous month"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
-            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h3 className="text-lg font-semibold text-slate-900 min-w-[180px] text-center">{monthYear}</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 min-w-[180px] text-center" aria-live="polite">{monthYear}</h3>
           <button
             onClick={goToNextMonth}
-            className="p-2 hover:bg-slate-100 rounded-lg transition"
+            aria-label="Next month"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
-            <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
         <button
           onClick={goToToday}
-          className="px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
+          className="px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition focus-ring min-h-[44px]"
         >
           Today
         </button>
       </div>
 
       {/* Calendar Grid */}
-      <div className="border border-slate-200 rounded-xl overflow-hidden">
+      <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden" role="grid" aria-label="Sleep diary calendar">
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 bg-slate-50 border-b border-slate-200">
+        <div className="grid grid-cols-7 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700" role="row">
           {WEEKDAYS.map(day => (
-            <div key={day} className="px-2 py-2 text-center text-xs font-semibold text-slate-600">
+            <div key={day} role="columnheader" className="px-2 py-2 text-center text-xs font-semibold text-slate-700 dark:text-slate-300">
               {day}
             </div>
           ))}
         </div>
 
         {/* Days grid */}
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7" role="rowgroup">
           {calendarDays.map((day, idx) => {
             const isToday = day.date.toDateString() === new Date().toDateString()
             const isSelected = selectedEntry?.date === day.date.toISOString().split('T')[0]
+            const dateLabel = day.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
             return (
               <button
                 key={idx}
                 onClick={() => day.entry && setSelectedEntry(isSelected ? null : day.entry)}
                 disabled={!day.entry}
+                aria-label={`${dateLabel}${day.entry ? `, sleep efficiency ${day.entry.se !== null ? Math.round(day.entry.se) + '%' : 'not recorded'}` : ', no entry'}`}
+                aria-pressed={isSelected}
+                role="gridcell"
                 className={`
-                  min-h-[80px] p-2 border-b border-r border-slate-100 text-left transition
-                  ${!day.isCurrentMonth ? 'bg-slate-50/50' : ''}
-                  ${day.entry ? 'hover:bg-slate-50 cursor-pointer' : 'cursor-default'}
+                  min-h-[80px] p-2 border-b border-r border-slate-100 dark:border-slate-700 text-left transition focus-ring
+                  ${!day.isCurrentMonth ? 'bg-slate-50/50 dark:bg-slate-900/50' : ''}
+                  ${day.entry ? 'hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer' : 'cursor-default'}
                   ${isSelected ? 'ring-2 ring-blue-500 ring-inset' : ''}
                 `}
               >
                 <div className={`
                   text-sm font-medium mb-1
-                  ${!day.isCurrentMonth ? 'text-slate-300' : 'text-slate-700'}
+                  ${!day.isCurrentMonth ? 'text-slate-400 dark:text-slate-600' : 'text-slate-700 dark:text-slate-300'}
                   ${isToday ? 'bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center' : ''}
                 `}>
                   {day.date.getDate()}
                 </div>
 
                 {day.entry && (
-                  <div className={`rounded-md p-1 ${getSEColor(day.entry.se)}`}>
+                  <div className={`rounded-md p-1 ${getSEColor(day.entry.se)} dark:opacity-90`}>
                     <div className={`text-xs font-semibold ${getSETextColor(day.entry.se)}`}>
                       {day.entry.se !== null ? `${Math.round(day.entry.se)}%` : '--'}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-slate-600 dark:text-slate-500">
                       {formatDuration(day.entry.tst)}
                     </div>
                   </div>
@@ -196,9 +202,9 @@ export function SleepCalendar({ entries }: SleepCalendarProps) {
 
       {/* Selected Entry Details */}
       {selectedEntry && (
-        <div className="bg-slate-50 rounded-xl p-4">
+        <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4" aria-live="polite">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-semibold text-slate-900">
+            <h4 className="font-semibold text-slate-900 dark:text-slate-100">
               {new Date(selectedEntry.date + 'T12:00:00').toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'long',
@@ -208,9 +214,10 @@ export function SleepCalendar({ entries }: SleepCalendarProps) {
             </h4>
             <button
               onClick={() => setSelectedEntry(null)}
-              className="text-slate-400 hover:text-slate-600"
+              aria-label="Close details"
+              className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 focus-ring rounded p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -218,26 +225,26 @@ export function SleepCalendar({ entries }: SleepCalendarProps) {
 
           <div className="grid grid-cols-4 gap-4">
             <div className="text-center">
-              <p className="text-xs text-slate-500 mb-1">Sleep Efficiency</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Sleep Efficiency</p>
               <p className={`text-lg font-bold ${getSETextColor(selectedEntry.se)}`}>
                 {selectedEntry.se !== null ? `${Math.round(selectedEntry.se)}%` : '--'}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-slate-500 mb-1">Total Sleep</p>
-              <p className="text-lg font-bold text-slate-900">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Sleep</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                 {formatDuration(selectedEntry.tst)}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-slate-500 mb-1">Time in Bed</p>
-              <p className="text-lg font-bold text-slate-900">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Time in Bed</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                 {formatDuration(selectedEntry.tib)}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-xs text-slate-500 mb-1">Quality</p>
-              <p className="text-lg font-bold text-slate-900">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Quality</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                 {selectedEntry.quality_rating !== null ? `${selectedEntry.quality_rating}/5` : '--'}
               </p>
             </div>
@@ -246,18 +253,18 @@ export function SleepCalendar({ entries }: SleepCalendarProps) {
       )}
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-green-100" />
-          <span className="text-slate-600">SE ≥ 85%</span>
+      <div className="flex items-center justify-center gap-4 text-xs" role="list" aria-label="Sleep efficiency legend">
+        <div className="flex items-center gap-1.5" role="listitem">
+          <div className="w-3 h-3 rounded bg-green-100 dark:bg-green-900" aria-hidden="true" />
+          <span className="text-slate-700 dark:text-slate-300">SE ≥ 85%</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-amber-100" />
-          <span className="text-slate-600">SE 70-84%</span>
+        <div className="flex items-center gap-1.5" role="listitem">
+          <div className="w-3 h-3 rounded bg-amber-100 dark:bg-amber-900" aria-hidden="true" />
+          <span className="text-slate-700 dark:text-slate-300">SE 70-84%</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-red-100" />
-          <span className="text-slate-600">SE &lt; 70%</span>
+        <div className="flex items-center gap-1.5" role="listitem">
+          <div className="w-3 h-3 rounded bg-red-100 dark:bg-red-900" aria-hidden="true" />
+          <span className="text-slate-700 dark:text-slate-300">SE &lt; 70%</span>
         </div>
       </div>
     </div>

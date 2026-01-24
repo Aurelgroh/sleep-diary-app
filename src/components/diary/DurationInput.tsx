@@ -17,6 +17,11 @@ export function DurationInput({ value, onChange, label, error, minValue = 0 }: D
   const [hours, setHours] = useState(0)
   const [minutes, setMinutes] = useState(0)
 
+  const labelId = 'duration-label'
+  const errorId = 'duration-error'
+  const hoursLabelId = 'hours-label'
+  const minutesLabelId = 'minutes-label'
+
   // Parse initial value and trigger onChange with default
   useEffect(() => {
     if (value !== undefined) {
@@ -45,69 +50,89 @@ export function DurationInput({ value, onChange, label, error, minValue = 0 }: D
   return (
     <div className="space-y-4">
       {label && (
-        <label className="block text-sm font-medium text-slate-700">{label}</label>
+        <label id={labelId} className="block text-sm font-medium text-slate-700 dark:text-slate-300">{label}</label>
       )}
 
       {/* Hours Selection */}
       <div>
-        <p className="text-sm text-slate-500 mb-2">Hours</p>
-        <div className="grid grid-cols-4 gap-2">
-          {HOURS.map((h) => (
-            <button
-              key={h}
-              type="button"
-              onClick={() => handleHourSelect(h)}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
-                hours === h
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {h}h
-            </button>
-          ))}
+        <p id={hoursLabelId} className="text-sm text-slate-600 dark:text-slate-400 mb-2">Hours</p>
+        <div 
+          role="radiogroup" 
+          aria-labelledby={hoursLabelId}
+          className="grid grid-cols-4 gap-2"
+        >
+          {HOURS.map((h) => {
+            const isSelected = hours === h
+            return (
+              <button
+                key={h}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                aria-label={`${h} hours`}
+                onClick={() => handleHourSelect(h)}
+                className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors min-h-[44px] focus-ring ${
+                  isSelected
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {h}h
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Minutes Selection */}
       <div>
-        <p className="text-sm text-slate-500 mb-2">Minutes</p>
-        <div className="grid grid-cols-4 gap-2">
-          {MINUTES.map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => handleMinuteSelect(m)}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors ${
-                minutes === m
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {m}m
-            </button>
-          ))}
+        <p id={minutesLabelId} className="text-sm text-slate-600 dark:text-slate-400 mb-2">Minutes</p>
+        <div 
+          role="radiogroup" 
+          aria-labelledby={minutesLabelId}
+          className="grid grid-cols-4 gap-2"
+        >
+          {MINUTES.map((m) => {
+            const isSelected = minutes === m
+            return (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                aria-label={`${m} minutes`}
+                onClick={() => handleMinuteSelect(m)}
+                className={`py-3 px-4 rounded-lg text-sm font-medium transition-colors min-h-[44px] focus-ring ${
+                  isSelected
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
+              >
+                {m}m
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* Display total duration */}
-      <div className="text-center py-4 bg-slate-50 rounded-lg">
-        <span className="text-2xl font-semibold text-slate-900">
+      <div className="text-center py-4 bg-slate-50 dark:bg-slate-800 rounded-lg" aria-live="polite">
+        <span className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
           {hours > 0 ? `${hours}h ` : ''}{minutes}m
         </span>
-        <span className="text-slate-500 text-sm ml-2">
+        <span className="text-slate-600 dark:text-slate-400 text-sm ml-2">
           ({totalMinutes} minutes total)
         </span>
       </div>
 
       {minValue > 0 && totalMinutes > 0 && totalMinutes < minValue && (
-        <p className="text-sm text-amber-600">
+        <p className="text-sm text-amber-600 dark:text-amber-400">
           Minimum recommended: {minValue} minutes
         </p>
       )}
 
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p id={errorId} role="alert" className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
     </div>
   )

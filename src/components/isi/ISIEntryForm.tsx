@@ -156,20 +156,22 @@ export function ISIEntryForm({ patientId, onComplete, onCancel }: ISIEntryFormPr
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
+          <label htmlFor="isi-date" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date</label>
           <input
+            id="isi-date"
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Assessment Type</label>
+          <label htmlFor="assessment-type" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Assessment Type</label>
           <select
+            id="assessment-type"
             value={assessmentType}
             onChange={(e) => setAssessmentType(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]"
           >
             {ASSESSMENT_TYPES.map(type => (
               <option key={type.value} value={type.value}>{type.label}</option>
@@ -180,23 +182,32 @@ export function ISIEntryForm({ patientId, onComplete, onCancel }: ISIEntryFormPr
 
       <div className="space-y-4">
         {ISI_QUESTIONS.map((q) => (
-          <div key={q.id} className="p-4 bg-slate-50 rounded-xl">
-            <p className="font-medium text-slate-900 mb-3">{q.id}. {q.question}</p>
-            <div className="flex flex-wrap gap-2">
-              {q.options.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setAnswers(prev => ({ ...prev, [q.id]: opt.value }))}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${
-                    answers[q.id] === opt.value
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
-                  }`}
-                >
-                  {opt.value} - {opt.label}
-                </button>
-              ))}
+          <div key={q.id} className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <p id={`isi-q-${q.id}`} className="font-medium text-slate-900 dark:text-slate-100 mb-3">{q.id}. {q.question}</p>
+            <div 
+              role="radiogroup" 
+              aria-labelledby={`isi-q-${q.id}`}
+              className="flex flex-wrap gap-2"
+            >
+              {q.options.map((opt) => {
+                const isSelected = answers[q.id] === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => setAnswers(prev => ({ ...prev, [q.id]: opt.value }))}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition min-h-[44px] focus-ring ${
+                      isSelected
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {opt.value} - {opt.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         ))}
@@ -204,16 +215,16 @@ export function ISIEntryForm({ patientId, onComplete, onCancel }: ISIEntryFormPr
 
       {/* Score display */}
       {allAnswered && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-center">
-          <p className="text-sm text-slate-600 mb-1">Total ISI Score</p>
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl text-center" aria-live="polite">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Total ISI Score</p>
           <p className={`text-3xl font-bold ${getSeverityColor(totalScore)}`}>{totalScore}</p>
           <p className={`text-sm ${getSeverityColor(totalScore)}`}>{getSeverityLabel(totalScore)}</p>
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-          <p className="text-red-700 text-sm">{error}</p>
+        <div role="alert" className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl">
+          <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
         </div>
       )}
 
@@ -221,14 +232,14 @@ export function ISIEntryForm({ patientId, onComplete, onCancel }: ISIEntryFormPr
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition"
+          className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition focus-ring min-h-[44px]"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!allAnswered || saving}
-          className="flex-1 py-3 px-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition disabled:opacity-50"
+          className="flex-1 py-3 px-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition disabled:opacity-50 focus-ring min-h-[44px]"
         >
           {saving ? 'Saving...' : 'Save ISI Score'}
         </button>

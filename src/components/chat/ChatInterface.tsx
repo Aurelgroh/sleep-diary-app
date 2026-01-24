@@ -223,16 +223,19 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
             <h3 className="font-semibold text-slate-900 dark:text-slate-100">
               {userType === 'therapist' ? `Chat with ${patientName || 'Patient'}` : 'Chat with Therapist'}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Messages are private and secure</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Messages are private and secure</p>
           </div>
           {/* Connection status indicator */}
-          <div className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${
-              connectionStatus === 'connected' ? 'bg-green-500' :
-              connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' :
-              'bg-red-500'
-            }`} />
-            <span className="text-xs text-slate-400 dark:text-slate-500">
+          <div className="flex items-center gap-1.5" role="status" aria-live="polite">
+            <div 
+              className={`w-2 h-2 rounded-full ${
+                connectionStatus === 'connected' ? 'bg-green-500' :
+                connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' :
+                'bg-red-500'
+              }`}
+              aria-hidden="true"
+            />
+            <span className="text-xs text-slate-600 dark:text-slate-400">
               {connectionStatus === 'connected' ? 'Live' :
                connectionStatus === 'connecting' ? 'Connecting...' :
                'Offline'}
@@ -259,12 +262,12 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
         {messages.length === 0 ? (
           <div className="text-center py-8">
             <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg className="w-6 h-6 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">No messages yet</p>
-            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Start the conversation!</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm">No messages yet</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">Start the conversation!</p>
           </div>
         ) : (
           <>
@@ -286,7 +289,7 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     <p
                       className={`text-xs mt-1 ${
-                        isOwnMessage ? 'text-blue-100' : 'text-slate-400 dark:text-slate-500'
+                        isOwnMessage ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
                       }`}
                     >
                       {formatTime(message.created_at)}
@@ -306,28 +309,32 @@ export function ChatInterface({ patientId, currentUserId, userType, patientName 
       {/* Input */}
       <form onSubmit={sendMessage} className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
         {error && (
-          <div className="mb-2 p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-xs">
+          <div id="chat-error" role="alert" className="mb-2 p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-xs">
             {error}
           </div>
         )}
         <div className="flex gap-2">
+          <label htmlFor="message-input" className="sr-only">Type a message</label>
           <input
+            id="message-input"
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400 dark:placeholder:text-slate-500"
+            aria-describedby={error ? 'chat-error' : undefined}
+            className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-500 dark:placeholder:text-slate-400 min-h-[44px]"
             disabled={sending}
           />
           <button
             type="submit"
             disabled={!newMessage.trim() || sending}
-            className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label={sending ? 'Sending message' : 'Send message'}
+            className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed focus-ring min-h-[44px] min-w-[44px]"
           >
             {sending ? (
-              <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             )}

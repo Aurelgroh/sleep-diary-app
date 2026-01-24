@@ -42,6 +42,9 @@ function WheelPicker({ items, selectedValue, onSelect, itemHeight = 44 }: WheelP
   const containerHeight = itemHeight * visibleItems
   const paddingItems = Math.floor(visibleItems / 2)
 
+  // Get current selected index
+  const selectedIndex = items.findIndex(item => item.value === selectedValue)
+
   // Scroll to selected value on mount
   useEffect(() => {
     if (containerRef.current && selectedValue !== null) {
@@ -88,11 +91,49 @@ function WheelPicker({ items, selectedValue, onSelect, itemHeight = 44 }: WheelP
     onSelect(items[index].value)
   }
 
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const currentIndex = selectedIndex !== -1 ? selectedIndex : 0
+    let newIndex = currentIndex
+
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault()
+        newIndex = Math.max(0, currentIndex - 1)
+        break
+      case 'ArrowDown':
+        e.preventDefault()
+        newIndex = Math.min(items.length - 1, currentIndex + 1)
+        break
+      case 'Home':
+        e.preventDefault()
+        newIndex = 0
+        break
+      case 'End':
+        e.preventDefault()
+        newIndex = items.length - 1
+        break
+      default:
+        return
+    }
+
+    if (newIndex !== currentIndex) {
+      handleItemClick(newIndex)
+    }
+  }
+
   return (
-    <div className="relative" style={{ height: containerHeight }}>
+    <div 
+      className="relative" 
+      style={{ height: containerHeight }}
+      role="listbox"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      aria-activedescendant={selectedValue !== null ? `option-${selectedValue}` : undefined}
+    >
       {/* Selection highlight */}
       <div
-        className="absolute left-0 right-0 bg-blue-100 rounded-lg pointer-events-none z-0"
+        className="absolute left-0 right-0 bg-blue-100 dark:bg-blue-900/40 rounded-lg pointer-events-none z-0"
         style={{
           top: paddingItems * itemHeight,
           height: itemHeight
@@ -100,8 +141,8 @@ function WheelPicker({ items, selectedValue, onSelect, itemHeight = 44 }: WheelP
       />
 
       {/* Gradient overlays */}
-      <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
-      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white dark:from-slate-900 to-transparent pointer-events-none z-10" />
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white dark:from-slate-900 to-transparent pointer-events-none z-10" />
 
       {/* Scrollable container */}
       <div
@@ -119,9 +160,12 @@ function WheelPicker({ items, selectedValue, onSelect, itemHeight = 44 }: WheelP
           return (
             <div
               key={item.value}
+              id={`option-${item.value}`}
+              role="option"
+              aria-selected={isSelected}
               onClick={() => handleItemClick(index)}
               className={`flex items-center justify-center cursor-pointer snap-center transition-all ${
-                isSelected ? 'text-blue-600 font-semibold text-xl' : 'text-slate-400 text-lg'
+                isSelected ? 'text-blue-600 dark:text-blue-400 font-semibold text-xl' : 'text-slate-600 dark:text-slate-400 text-lg'
               }`}
               style={{ height: itemHeight }}
             >
@@ -198,10 +242,10 @@ export function TimeInput({ value, onChange, label, error, defaultTime }: TimeIn
       )}
 
       {/* Picker wheels container */}
-      <div className="flex gap-4 bg-white rounded-2xl border border-slate-200 p-4">
+      <div className="flex gap-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
         {/* Hour picker */}
         <div className="flex-1">
-          <p className="text-xs text-slate-500 text-center mb-2 font-medium">Hour</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 text-center mb-2 font-medium">Hour</p>
           <WheelPicker
             items={hourItems}
             selectedValue={selectedHour}
@@ -210,11 +254,11 @@ export function TimeInput({ value, onChange, label, error, defaultTime }: TimeIn
         </div>
 
         {/* Divider */}
-        <div className="w-px bg-slate-200 my-8" />
+        <div className="w-px bg-slate-200 dark:bg-slate-700 my-8" aria-hidden="true" />
 
         {/* Minute picker */}
         <div className="flex-1">
-          <p className="text-xs text-slate-500 text-center mb-2 font-medium">Minute</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 text-center mb-2 font-medium">Minute</p>
           <WheelPicker
             items={minuteItems}
             selectedValue={selectedMinute}
@@ -224,12 +268,12 @@ export function TimeInput({ value, onChange, label, error, defaultTime }: TimeIn
       </div>
 
       {/* Display selected time */}
-      <div className="text-center py-3 bg-blue-50 rounded-xl border border-blue-200">
-        <span className="text-2xl font-bold text-blue-600">
+      <div className="text-center py-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800">
+        <span className="text-2xl font-bold text-blue-600 dark:text-blue-400" aria-live="polite">
           {formatHour12(selectedHour)}:{formatMinute(selectedMinute)} {getAmPm(selectedHour)}
         </span>
         {!hasInteracted && (
-          <p className="text-xs text-slate-500 mt-1">Scroll to select your time</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">Scroll or use arrow keys to select your time</p>
         )}
       </div>
 
