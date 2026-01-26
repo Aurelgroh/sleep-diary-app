@@ -75,41 +75,41 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
   return (
     <>
       {/* Account Information */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Account Information</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Account Information</h2>
         </div>
         <div className="p-6 space-y-4">
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Name</p>
-              <p className="font-medium text-slate-900">{therapist.name}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Name</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{therapist.name}</p>
             </div>
           </div>
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Email</p>
-              <p className="font-medium text-slate-900">{userEmail}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{userEmail}</p>
             </div>
           </div>
           {therapist.credentials && (
-            <div className="flex justify-between items-center py-3 border-b border-slate-100">
+            <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
               <div>
-                <p className="text-sm text-slate-500">Credentials</p>
-                <p className="font-medium text-slate-900">{therapist.credentials}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Credentials</p>
+                <p className="font-medium text-slate-900 dark:text-slate-100">{therapist.credentials}</p>
               </div>
             </div>
           )}
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Timezone</p>
-              <p className="font-medium text-slate-900">{therapist.timezone}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{therapist.timezone}</p>
             </div>
           </div>
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Account Status</p>
-              <p className="font-medium text-slate-900 capitalize">{therapist.status}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Account Status</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100 capitalize">{therapist.status}</p>
             </div>
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
               therapist.status === 'active' ? 'bg-green-100 text-green-700' :
@@ -121,40 +121,40 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
           </div>
           <div className="flex justify-between items-center py-3">
             <div>
-              <p className="text-sm text-slate-500">Member since</p>
-              <p className="font-medium text-slate-900">{formatDate(therapist.created_at)}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Member since</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{formatDate(therapist.created_at)}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Practice Overview */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Practice Overview</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Practice Overview</h2>
         </div>
         <div className="p-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
               <span className="text-2xl font-bold text-blue-600">{patientCount}</span>
             </div>
             <div>
-              <p className="font-medium text-slate-900">Active Patients</p>
-              <p className="text-sm text-slate-500">Currently under your care</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">Active Patients</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Currently under your care</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Account Actions</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Account Actions</h2>
         </div>
         <div className="p-6 space-y-4">
           <button
             onClick={handleLogout}
-            className="w-full py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -162,14 +162,14 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
             Sign Out
           </button>
 
-          <div className="pt-4 border-t border-slate-200">
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="w-full py-3 px-4 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition"
+              className="w-full py-3 px-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition"
             >
               Delete Account
             </button>
-            <p className="text-xs text-slate-500 mt-2 text-center">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
               This will permanently delete your account and all associated data.
             </p>
           </div>
@@ -179,16 +179,16 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6">
             {deleteStep === 1 && (
               <>
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 text-center mb-2">Delete Account?</h3>
-                <p className="text-slate-600 text-center mb-4">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-2">Delete Account?</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-center mb-4">
                   This action cannot be undone. All your data will be permanently deleted.
                 </p>
 
@@ -203,7 +203,7 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
                   </div>
                 )}
 
-                <ul className="text-sm text-slate-600 mb-6 space-y-2">
+                <ul className="text-sm text-slate-600 dark:text-slate-300 mb-6 space-y-2">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
                     Your therapist profile
@@ -224,7 +224,7 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition"
+                    className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                   >
                     Cancel
                   </button>
@@ -240,12 +240,12 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
 
             {deleteStep === 2 && (
               <>
-                <h3 className="text-xl font-semibold text-slate-900 text-center mb-2">Final Confirmation</h3>
-                <p className="text-slate-600 text-center mb-6">
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-2">Final Confirmation</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-center mb-6">
                   Type <span className="font-mono font-bold text-red-600">DELETE MY ACCOUNT</span> to confirm:
                 </p>
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
                     {error}
                   </div>
                 )}
@@ -254,7 +254,7 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}
                   placeholder="Type here..."
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition mb-6"
+                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition mb-6 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <div className="flex gap-3">
                   <button
@@ -263,7 +263,7 @@ export function TherapistProfileClient({ therapist, userEmail, patientCount }: T
                       setDeleteConfirmText('')
                       setError(null)
                     }}
-                    className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition"
+                    className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                     disabled={deleting}
                   >
                     Back

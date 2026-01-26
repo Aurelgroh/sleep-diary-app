@@ -33,7 +33,7 @@ export function SEChart({ entries }: SEChartProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">No sleep efficiency data to display</p>
+        <p className="text-slate-500 dark:text-slate-400">No sleep efficiency data to display</p>
       </div>
     )
   }
@@ -41,10 +41,10 @@ export function SEChart({ entries }: SEChartProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-slate-900">Sleep Efficiency Over Time</h3>
+        <h3 className="font-medium text-slate-900 dark:text-slate-100">Sleep Efficiency Over Time</h3>
         <div className="flex items-center gap-2 text-sm">
           <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-          <span className="text-slate-600">Sleep Efficiency %</span>
+          <span className="text-slate-600 dark:text-slate-400">Sleep Efficiency %</span>
         </div>
       </div>
 
@@ -76,13 +76,13 @@ export function SEChart({ entries }: SEChartProps) {
                 if (!active || !payload || payload.length === 0) return null
                 const se = payload[0]?.value
                 return (
-                  <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-                    <p className="font-medium text-slate-900 mb-1">{label}</p>
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 mb-1">{label}</p>
                     <p className="text-sm">
-                      <span className="text-slate-600">Sleep Efficiency: </span>
+                      <span className="text-slate-600 dark:text-slate-400">Sleep Efficiency: </span>
                       <span className={`font-bold ${
-                        se && Number(se) >= 85 ? 'text-green-600' :
-                        se && Number(se) >= 75 ? 'text-amber-600' : 'text-red-600'
+                        se && Number(se) >= 85 ? 'text-green-600 dark:text-green-400' :
+                        se && Number(se) >= 75 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
                       }`}>{se}%</span>
                     </p>
                   </div>
@@ -120,7 +120,7 @@ export function SEChart({ entries }: SEChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-slate-500 dark:text-slate-400">
         <p><strong>Sleep Efficiency (SE%)</strong> = Total Sleep Time / Time in Bed. Target is 85% or higher.</p>
       </div>
     </div>

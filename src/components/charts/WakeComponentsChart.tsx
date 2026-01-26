@@ -87,7 +87,7 @@ export function WakeComponentsChart({ entries }: WakeComponentsChartProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">No wake component data to display</p>
+        <p className="text-slate-500 dark:text-slate-400">No wake component data to display</p>
       </div>
     )
   }
@@ -95,7 +95,7 @@ export function WakeComponentsChart({ entries }: WakeComponentsChartProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="font-medium text-slate-900">Wake Components Over Time</h3>
+        <h3 className="font-medium text-slate-900 dark:text-slate-100">Wake Components Over Time</h3>
       </div>
 
       {/* Toggle buttons */}
@@ -107,7 +107,7 @@ export function WakeComponentsChart({ entries }: WakeComponentsChartProps) {
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition ${
               visibleMetrics.has(metric.key)
                 ? 'text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
             style={{
               backgroundColor: visibleMetrics.has(metric.key) ? metric.color : undefined,
@@ -144,16 +144,16 @@ export function WakeComponentsChart({ entries }: WakeComponentsChartProps) {
               content={({ active, payload, label }) => {
                 if (!active || !payload || payload.length === 0) return null
                 return (
-                  <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-                    <p className="font-medium text-slate-900 mb-2">{label}</p>
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 mb-2">{label}</p>
                     {payload.map((item, idx) => {
                       const metric = METRICS.find(m => m.key === item.dataKey)
                       if (!metric) return null
                       return (
                         <p key={idx} className="text-sm flex items-center gap-2">
                           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                          <span className="text-slate-600">{metric.label}:</span>
-                          <span className="font-medium">{formatDuration(item.value as number)}</span>
+                          <span className="text-slate-600 dark:text-slate-400">{metric.label}:</span>
+                          <span className="font-medium text-slate-900 dark:text-slate-100">{formatDuration(item.value as number)}</span>
                         </p>
                       )
                     })}
@@ -181,7 +181,7 @@ export function WakeComponentsChart({ entries }: WakeComponentsChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="text-xs text-slate-500 space-y-1">
+      <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
         <p><strong>SOL</strong> = Sleep Onset Latency (time to fall asleep), <strong>WASO</strong> = Wake After Sleep Onset (time awake during night)</p>
         <p><strong>EMA</strong> = Early Morning Awakening (woke earlier than wanted). <strong>(Out)</strong> = Time spent out of bed during that period.</p>
       </div>

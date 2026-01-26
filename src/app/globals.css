@@ -167,3 +167,59 @@ body {
 .dark .focus-ring:focus-visible {
   outline-color: #60a5fa;
 }
+
+/* ================================================
+   Native Input Styling (date, time, select)
+   ================================================ */
+
+/* Set color-scheme for proper dark mode support on native inputs */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* Force text color on native date/time inputs */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Ensure the calendar/clock icons are visible */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0);
+  opacity: 0.7;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="time"]::-webkit-calendar-picker-indicator,
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Fix for Firefox date/time inputs */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  -moz-appearance: textfield;
+}
+
+/* Select element text visibility */
+select {
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+
+/* Ensure all form inputs have proper text color */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  color: inherit;
+}

@@ -57,8 +57,8 @@ export default async function PatientsPage() {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Patients</h1>
-          <p className="text-slate-600 mt-1">Manage your patient list</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Patients</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Manage your patient list</p>
         </div>
         <Link
           href="/therapist/patients/invite"
@@ -72,14 +72,14 @@ export default async function PatientsPage() {
       </div>
 
       {allItems.length === 0 ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-slate-900 mb-2">No patients yet</h3>
-          <p className="text-slate-600 mb-4">Get started by inviting your first patient</p>
+          <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">No patients yet</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-4">Get started by inviting your first patient</p>
           <Link
             href="/therapist/patients/invite"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
@@ -88,22 +88,22 @@ export default async function PatientsPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Patient</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Session</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Patient</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Session</th>
                 <th className="text-right px-6 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
               {allItems.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50">
+                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800">
                   <td className="px-6 py-4">
-                    <p className="font-medium text-slate-900">{item.name}</p>
-                    <p className="text-sm text-slate-500">{item.email}</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{item.name}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.email}</p>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -125,7 +125,7 @@ export default async function PatientsPage() {
                       </p>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-slate-600">
+                  <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
                     {item.isInvitation
                       ? '—'
                       : item.current_session === 0

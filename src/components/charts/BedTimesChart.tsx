@@ -82,7 +82,7 @@ export function BedTimesChart({ entries }: BedTimesChartProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">No bed time data to display</p>
+        <p className="text-slate-500 dark:text-slate-400">No bed time data to display</p>
       </div>
     )
   }
@@ -90,15 +90,15 @@ export function BedTimesChart({ entries }: BedTimesChartProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="font-medium text-slate-900">Bed Times Over Time</h3>
+        <h3 className="font-medium text-slate-900 dark:text-slate-100">Bed Times Over Time</h3>
         <div className="flex gap-4 text-sm">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-indigo-500"></span>
-            <span className="text-slate-600">Bed Time</span>
+            <span className="text-slate-600 dark:text-slate-400">Bed Time</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-            <span className="text-slate-600">Out of Bed</span>
+            <span className="text-slate-600 dark:text-slate-400">Out of Bed</span>
           </div>
         </div>
       </div>
@@ -133,20 +133,20 @@ export function BedTimesChart({ entries }: BedTimesChartProps) {
                 const ttb = payload.find(p => p.dataKey === 'ttb')?.value as number | undefined
                 const tob = payload.find(p => p.dataKey === 'tob')?.value as number | undefined
                 return (
-                  <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-                    <p className="font-medium text-slate-900 mb-2">{label}</p>
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 mb-2">{label}</p>
                     {ttb !== undefined && (
                       <p className="text-sm flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full bg-indigo-500" />
-                        <span className="text-slate-600">Bed Time:</span>
-                        <span className="font-medium">{formatTime(ttb)}</span>
+                        <span className="text-slate-600 dark:text-slate-400">Bed Time:</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-100">{formatTime(ttb)}</span>
                       </p>
                     )}
                     {tob !== undefined && (
                       <p className="text-sm flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full bg-amber-500" />
-                        <span className="text-slate-600">Out of Bed:</span>
-                        <span className="font-medium">{formatTime(tob)}</span>
+                        <span className="text-slate-600 dark:text-slate-400">Out of Bed:</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-100">{formatTime(tob)}</span>
                       </p>
                     )}
                   </div>
@@ -185,7 +185,7 @@ export function BedTimesChart({ entries }: BedTimesChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-slate-500 dark:text-slate-400">
         <p>The shaded area represents your time in bed. Consistent bed times help regulate your sleep.</p>
       </div>
     </div>

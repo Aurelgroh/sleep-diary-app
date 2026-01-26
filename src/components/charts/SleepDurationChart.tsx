@@ -49,7 +49,7 @@ export function SleepDurationChart({ entries }: SleepDurationChartProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">No sleep duration data to display</p>
+        <p className="text-slate-500 dark:text-slate-400">No sleep duration data to display</p>
       </div>
     )
   }
@@ -57,12 +57,12 @@ export function SleepDurationChart({ entries }: SleepDurationChartProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="font-medium text-slate-900">Sleep Duration Over Time</h3>
+        <h3 className="font-medium text-slate-900 dark:text-slate-100">Sleep Duration Over Time</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setShowTST(!showTST)}
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition ${
-              showTST ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-600'
+              showTST ? 'bg-green-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
             }`}
           >
             <span className={`w-2 h-2 rounded-full ${showTST ? 'bg-white' : 'bg-green-500'}`} />
@@ -71,7 +71,7 @@ export function SleepDurationChart({ entries }: SleepDurationChartProps) {
           <button
             onClick={() => setShowTIB(!showTIB)}
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition ${
-              showTIB ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-600'
+              showTIB ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
             }`}
           >
             <span className={`w-2 h-2 rounded-full ${showTIB ? 'bg-white' : 'bg-blue-500'}`} />
@@ -102,13 +102,13 @@ export function SleepDurationChart({ entries }: SleepDurationChartProps) {
               content={({ active, payload, label }) => {
                 if (!active || !payload || payload.length === 0) return null
                 return (
-                  <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-                    <p className="font-medium text-slate-900 mb-2">{label}</p>
+                  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 mb-2">{label}</p>
                     {payload.map((item, idx) => (
                       <p key={idx} className="text-sm flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                        <span className="text-slate-600">{item.dataKey === 'tst' ? 'Total Sleep:' : 'Time in Bed:'}</span>
-                        <span className="font-medium">{formatDuration(item.value as number)}</span>
+                        <span className="text-slate-600 dark:text-slate-400">{item.dataKey === 'tst' ? 'Total Sleep:' : 'Time in Bed:'}</span>
+                        <span className="font-medium text-slate-900 dark:text-slate-100">{formatDuration(item.value as number)}</span>
                       </p>
                     ))}
                   </div>
@@ -141,7 +141,7 @@ export function SleepDurationChart({ entries }: SleepDurationChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-slate-500 dark:text-slate-400">
         <p><strong>TST</strong> = Total Sleep Time (actual time asleep), <strong>TIB</strong> = Time in Bed (from bedtime to out of bed)</p>
       </div>
     </div>

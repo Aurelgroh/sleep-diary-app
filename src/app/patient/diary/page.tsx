@@ -106,8 +106,8 @@ export default async function DiaryHistoryPage({
       {/* Header with CTA */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Sleep Diary</h1>
-          <p className="text-slate-600 mt-1">{streak} day streak</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Sleep Diary</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">{streak} day streak</p>
         </div>
         {!hasLoggedToday && (
           <Link
@@ -122,21 +122,21 @@ export default async function DiaryHistoryPage({
       {/* Stats summary */}
       {entries && entries.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-            <p className="text-2xl font-bold text-slate-900">{entries.length}</p>
-            <p className="text-xs text-slate-500">Total Entries</p>
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{entries.length}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Total Entries</p>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-            <p className="text-2xl font-bold text-slate-900">{streak}</p>
-            <p className="text-xs text-slate-500">Day Streak</p>
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{streak}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Day Streak</p>
           </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-            <p className="text-2xl font-bold text-slate-900">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-center">
+            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
               {entries.slice(0, 7).reduce((sum, e) => sum + (e.tst || 0), 0) > 0
                 ? formatDuration(Math.round(entries.slice(0, 7).reduce((sum, e) => sum + (e.tst || 0), 0) / Math.min(entries.length, 7)))
                 : '--'}
             </p>
-            <p className="text-xs text-slate-500">Avg Sleep</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Avg Sleep</p>
           </div>
         </div>
       )}
@@ -147,12 +147,12 @@ export default async function DiaryHistoryPage({
           {entries.map((entry) => (
             <div
               key={entry.id}
-              className="bg-white rounded-xl border border-slate-200 p-4"
+              className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-4"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="font-medium text-slate-900">{formatDate(entry.date)}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="font-medium text-slate-900 dark:text-slate-100">{formatDate(entry.date)}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {formatTime(entry.tts)} - {formatTime(entry.tfa)}
                   </p>
                 </div>
@@ -160,17 +160,17 @@ export default async function DiaryHistoryPage({
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">Time in Bed</p>
-                  <p className="font-medium text-sm text-slate-900">{entry.tib ? formatDuration(entry.tib) : '--'}</p>
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Time in Bed</p>
+                  <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{entry.tib ? formatDuration(entry.tib) : '--'}</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">Total Sleep</p>
-                  <p className="font-medium text-sm text-slate-900">{entry.tst ? formatDuration(entry.tst) : '--'}</p>
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Total Sleep</p>
+                  <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{entry.tst ? formatDuration(entry.tst) : '--'}</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-2">
-                  <p className="text-xs text-slate-500">Time Awake</p>
-                  <p className="font-medium text-sm text-slate-900">{entry.twt ? formatDuration(entry.twt) : '--'}</p>
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Time Awake</p>
+                  <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{entry.twt ? formatDuration(entry.twt) : '--'}</p>
                 </div>
               </div>
             </div>
@@ -178,13 +178,13 @@ export default async function DiaryHistoryPage({
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-slate-900">No entries yet</h2>
-          <p className="text-slate-600 mt-1 mb-6">Start logging your sleep to see your history</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">No entries yet</h2>
+          <p className="text-slate-600 dark:text-slate-400 mt-1 mb-6">Start logging your sleep to see your history</p>
           <Link
             href="/patient/diary/new"
             className="inline-block py-3 px-6 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition"

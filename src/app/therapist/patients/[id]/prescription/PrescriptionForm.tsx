@@ -196,24 +196,24 @@ export function PrescriptionForm({
   return (
     <div className="space-y-6">
       {/* Current Week's Data */}
-      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6">
-        <h2 className="font-semibold text-slate-900 mb-4">This Week&apos;s Data</h2>
+      <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">This Week&apos;s Data</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-slate-500">Avg Sleep Efficiency</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Avg Sleep Efficiency</p>
             <p className={`text-2xl font-bold ${getSEColorClass(weeklyAvgSE)}`}>
               {formatSE(weeklyAvgSE)}
             </p>
           </div>
           <div>
-            <p className="text-sm text-slate-500">Days Logged</p>
-            <p className="text-2xl font-bold text-slate-900">{daysLogged}/7</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Days Logged</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{daysLogged}/7</p>
           </div>
         </div>
 
         {/* SE Thresholds Guide */}
-        <div className="mt-4 pt-4 border-t border-slate-200">
-          <p className="text-xs text-slate-500 mb-2">Titration Guidelines</p>
+        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Titration Guidelines</p>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="px-2 py-1 bg-green-100 text-green-700 rounded">≥90%: Increase</span>
             <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">85-89%: Maintain</span>
@@ -225,22 +225,22 @@ export function PrescriptionForm({
 
       {/* Titration Recommendation */}
       {daysLogged >= 3 && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h2 className="font-semibold text-slate-900">Recommendation</h2>
-              <p className="text-sm text-slate-500">Based on {daysLogged} days of data</p>
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100">Recommendation</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Based on {daysLogged} days of data</p>
             </div>
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getActionBadgeClass(recommendation.action)}`}>
               {getActionLabel(recommendation.action)}
             </span>
           </div>
-          <p className="text-slate-600 mb-4">{recommendation.reason}</p>
+          <p className="text-slate-600 dark:text-slate-300 mb-4">{recommendation.reason}</p>
 
           {(recommendation.action === 'increase' || recommendation.action === 'decrease') && suggestedPrescription && (
-            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+            <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
               <div>
-                <p className="text-xs text-slate-500">Suggested Window</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Suggested Window</p>
                 <p className="font-medium">
                   {formatPrescriptionTime(suggestedPrescription.bedtime)} → {formatPrescriptionTime(suggestedPrescription.wake_time)}
                 </p>
@@ -261,15 +261,15 @@ export function PrescriptionForm({
       )}
 
       {/* Prescription Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
-        <h2 className="font-semibold text-slate-900">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 space-y-6">
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100">
           {currentPrescription ? 'Update Prescription' : 'Set Initial Prescription'}
         </h2>
 
         {/* Current Prescription Display */}
         {currentPrescription && (
-          <div className="p-4 bg-slate-50 rounded-xl">
-            <p className="text-xs text-slate-500 mb-2">Current Prescription</p>
+          <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Current Prescription</p>
             <p className="font-medium">
               {formatPrescriptionTime(currentPrescription.bedtime)} → {formatPrescriptionTime(currentPrescription.wake_time)}
             </p>
@@ -283,7 +283,7 @@ export function PrescriptionForm({
         <div className="grid grid-cols-2 gap-4">
           {/* Bedtime */}
           <div>
-            <label htmlFor="bedtime" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="bedtime" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Bedtime
             </label>
             <input
@@ -291,13 +291,13 @@ export function PrescriptionForm({
               id="bedtime"
               value={bedtime}
               onChange={(e) => setBedtime(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
 
           {/* Wake Time */}
           <div>
-            <label htmlFor="wakeTime" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="wakeTime" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Wake Time
             </label>
             <input
@@ -305,7 +305,7 @@ export function PrescriptionForm({
               id="wakeTime"
               value={wakeTime}
               onChange={(e) => setWakeTime(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
             />
           </div>
         </div>
@@ -325,14 +325,14 @@ export function PrescriptionForm({
 
         {/* Minimum Window */}
         <div>
-          <label htmlFor="minWindow" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="minWindow" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Minimum Window Floor (hours)
           </label>
           <select
             id="minWindow"
             value={minWindow}
             onChange={(e) => setMinWindow(Number(e.target.value))}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           >
             <option value={270}>4.5 hours</option>
             <option value={300}>5 hours</option>
@@ -343,7 +343,7 @@ export function PrescriptionForm({
 
         {/* Effective Date */}
         <div>
-          <label htmlFor="effectiveDate" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="effectiveDate" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Effective Date
           </label>
           <input
@@ -351,13 +351,13 @@ export function PrescriptionForm({
             id="effectiveDate"
             value={effectiveDate}
             onChange={(e) => setEffectiveDate(e.target.value)}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           />
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="notes" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
             Notes (optional)
           </label>
           <textarea
@@ -366,7 +366,7 @@ export function PrescriptionForm({
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="Reason for adjustment, patient factors, etc."
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
         </div>
 
@@ -396,12 +396,12 @@ export function PrescriptionForm({
 
       {/* Prescription History */}
       {prescriptionHistory.length > 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="font-semibold text-slate-900">Prescription History</h2>
-            <p className="text-sm text-slate-500">Click to view sleep data for each period</p>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Prescription History</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Click to view sleep data for each period</p>
           </div>
-          <div className="divide-y divide-slate-200">
+          <div className="divide-y divide-slate-200 dark:divide-slate-700">
             {prescriptionHistory.map((rx, index) => {
               const isExpanded = expandedPrescription === rx.id
               const data = weekData[rx.id]
@@ -412,7 +412,7 @@ export function PrescriptionForm({
                   <button
                     type="button"
                     onClick={() => togglePrescription(rx, index)}
-                    className="w-full p-4 flex items-center justify-between hover:bg-slate-50 transition text-left"
+                    className="w-full p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition text-left"
                   >
                     <div className="flex items-center gap-3">
                       <svg
@@ -424,16 +424,16 @@ export function PrescriptionForm({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                       <div>
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-slate-900 dark:text-slate-100">
                           {formatPrescriptionTime(rx.bedtime)} → {formatPrescriptionTime(rx.wake_time)}
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           {Math.round(rx.window_minutes / 60 * 10) / 10} hours
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
                         {new Date(rx.effective_date).toLocaleDateString()}
                       </p>
                       {index === 0 && (
@@ -444,46 +444,46 @@ export function PrescriptionForm({
 
                   {/* Expanded Sleep Data */}
                   {isExpanded && (
-                    <div className="px-4 pb-4 pt-0 bg-slate-50 border-t border-slate-100">
+                    <div className="px-4 pb-4 pt-0 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
                       {isLoading ? (
                         <div className="py-4 text-center">
                           <div className="animate-pulse text-slate-400">Loading sleep data...</div>
                         </div>
                       ) : data ? (
                         <div className="pt-3">
-                          <p className="text-xs text-slate-500 mb-3">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
                             Sleep data from {new Date(data.startDate).toLocaleDateString()} to {new Date(data.endDate).toLocaleDateString()}
                           </p>
                           {data.daysLogged > 0 ? (
                             <div className="grid grid-cols-4 gap-3">
-                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
-                                <p className="text-xs text-slate-500">Avg SE</p>
+                              <div className="bg-white dark:bg-slate-900 rounded-lg p-3 text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Avg SE</p>
                                 <p className={`text-lg font-bold ${getSEColorClass(data.avgSe)}`}>
                                   {data.avgSe !== null ? `${Math.round(data.avgSe)}%` : '--'}
                                 </p>
                               </div>
-                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
-                                <p className="text-xs text-slate-500">Avg TST</p>
-                                <p className="text-lg font-bold text-slate-900">
+                              <div className="bg-white dark:bg-slate-900 rounded-lg p-3 text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Avg TST</p>
+                                <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                                   {data.avgTst !== null ? formatDurationHM(data.avgTst) : '--'}
                                 </p>
                               </div>
-                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
-                                <p className="text-xs text-slate-500">Avg TIB</p>
-                                <p className="text-lg font-bold text-slate-900">
+                              <div className="bg-white dark:bg-slate-900 rounded-lg p-3 text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Avg TIB</p>
+                                <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                                   {data.avgTib !== null ? formatDurationHM(data.avgTib) : '--'}
                                 </p>
                               </div>
-                              <div className="bg-white rounded-lg p-3 text-center border border-slate-200">
-                                <p className="text-xs text-slate-500">Days</p>
-                                <p className="text-lg font-bold text-slate-900">{data.daysLogged}</p>
+                              <div className="bg-white dark:bg-slate-900 rounded-lg p-3 text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Days</p>
+                                <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{data.daysLogged}</p>
                               </div>
                             </div>
                           ) : (
                             <p className="text-sm text-slate-400 py-2">No diary entries for this period</p>
                           )}
                           {rx.notes && (
-                            <p className="text-sm text-slate-500 mt-3 pt-3 border-t border-slate-200">
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
                               <span className="font-medium">Notes:</span> {rx.notes}
                             </p>
                           )}

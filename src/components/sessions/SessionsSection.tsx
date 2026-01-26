@@ -170,7 +170,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
         <div className="flex items-center justify-center h-32">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         </div>
@@ -179,11 +179,11 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">Sessions</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Sessions</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {sessions.length > 0
               ? `${sessions.length} session${sessions.length > 1 ? 's' : ''} recorded`
               : 'No sessions scheduled yet'}
@@ -204,19 +204,19 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
 
       {/* Schedule Form */}
       {showScheduleForm && (
-        <div className="p-6 bg-slate-50 border-b border-slate-200">
-          <h3 className="font-medium text-slate-900 mb-4">
+        <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+          <h3 className="font-medium text-slate-900 dark:text-slate-100 mb-4">
             {editingSession ? 'Edit Session' : 'Schedule New Session'}
           </h3>
           <form onSubmit={scheduleSession} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg text-sm">
                 {error}
               </div>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Session Date
                 </label>
                 <input
@@ -224,24 +224,24 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
                   value={newSessionDate}
                   onChange={(e) => setNewSessionDate(e.target.value)}
                   min={editingSession ? undefined : new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Time (optional)
                 </label>
                 <input
                   type="time"
                   value={newSessionTime}
                   onChange={(e) => setNewSessionTime(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Notes (optional)
               </label>
               <textarea
@@ -249,7 +249,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
                 onChange={(e) => setNewSessionNotes(e.target.value)}
                 placeholder="Session agenda, topics to discuss..."
                 rows={2}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
             </div>
             <div className="flex gap-2">
@@ -263,7 +263,7 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-4 py-2 bg-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-300 transition"
+                className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition"
               >
                 Cancel
               </button>
@@ -276,28 +276,28 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         {/* Upcoming Sessions */}
         {upcomingSessions.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
               Upcoming
             </h3>
             <div className="space-y-3">
               {upcomingSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="flex items-start gap-4 p-4 bg-blue-50 border border-blue-100 rounded-xl"
+                  className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl"
                 >
                   <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
                     {session.session_number}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-slate-900">Session {session.session_number}</p>
-                    <p className="text-sm text-blue-700">
+                    <p className="font-medium text-slate-900 dark:text-slate-100">Session {session.session_number}</p>
+                    <p className="text-sm text-blue-700 dark:text-blue-400">
                       {formatDate(session.date)}
                       {session.scheduled_time && (
                         <span className="ml-1">at {formatTime(session.scheduled_time)}</span>
                       )}
                     </p>
                     {session.notes && (
-                      <p className="text-sm text-slate-600 mt-1">{session.notes}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{session.notes}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -337,28 +337,28 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         {/* Past Sessions */}
         {pastSessions.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
               Completed
             </h3>
             <div className="space-y-3">
               {pastSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="flex items-start gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl"
+                  className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
                 >
                   <div className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                     {session.session_number}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-slate-900">Session {session.session_number}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="font-medium text-slate-900 dark:text-slate-100">Session {session.session_number}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       {formatDate(session.date)}
                       {session.scheduled_time && (
                         <span className="ml-1">at {formatTime(session.scheduled_time)}</span>
                       )}
                     </p>
                     {session.notes && (
-                      <p className="text-sm text-slate-600 mt-1">{session.notes}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">{session.notes}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -398,14 +398,14 @@ export function SessionsSection({ patientId, therapistId, currentSession, isTher
         {/* Empty State */}
         {sessions.length === 0 && (
           <div className="text-center py-8">
-            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-slate-500 text-sm">No sessions scheduled yet</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">No sessions scheduled yet</p>
             {isTherapist && (
-              <p className="text-slate-400 text-xs mt-1">Click "Schedule Session" to add one</p>
+              <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Click "Schedule Session" to add one</p>
             )}
           </div>
         )}

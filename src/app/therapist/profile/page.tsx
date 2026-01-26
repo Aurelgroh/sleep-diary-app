@@ -30,7 +30,7 @@ export default async function TherapistProfilePage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">Profile</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Profile</h1>
       </div>
 
       <TherapistProfileClient

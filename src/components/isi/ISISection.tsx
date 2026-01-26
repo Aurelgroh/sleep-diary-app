@@ -64,7 +64,7 @@ export function ISISection({ patientId }: ISISectionProps) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
         <div className="flex items-center justify-center h-24">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
         </div>

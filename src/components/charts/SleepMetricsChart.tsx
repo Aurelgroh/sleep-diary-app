@@ -119,8 +119,8 @@ export function SleepMetricsChart({ entries }: SleepMetricsChartProps) {
     if (!active || !payload || payload.length === 0) return null
 
     return (
-      <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-        <p className="font-medium text-slate-900 mb-2">{label}</p>
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-3">
+        <p className="font-medium text-slate-900 dark:text-slate-100 mb-2">{label}</p>
         {payload.map((item, idx) => {
           const metric = METRICS.find(m => m.key === item.dataKey)
           if (!metric || item.value === null) return null
@@ -140,8 +140,8 @@ export function SleepMetricsChart({ entries }: SleepMetricsChartProps) {
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: item.color }}
               />
-              <span className="text-slate-600">{metric.label}:</span>
-              <span className="font-medium text-slate-900">{displayValue}</span>
+              <span className="text-slate-600 dark:text-slate-400">{metric.label}:</span>
+              <span className="font-medium text-slate-900 dark:text-slate-100">{displayValue}</span>
             </div>
           )
         })}
@@ -152,7 +152,7 @@ export function SleepMetricsChart({ entries }: SleepMetricsChartProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-500">No data to display</p>
+        <p className="text-slate-500 dark:text-slate-400">No data to display</p>
       </div>
     )
   }
@@ -168,7 +168,7 @@ export function SleepMetricsChart({ entries }: SleepMetricsChartProps) {
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
               visibleMetrics.has(metric.key)
                 ? 'text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
             style={{
               backgroundColor: visibleMetrics.has(metric.key) ? metric.color : undefined,
@@ -283,7 +283,7 @@ export function SleepMetricsChart({ entries }: SleepMetricsChartProps) {
       </div>
 
       {/* Legend explanation */}
-      <div className="text-xs text-slate-500 space-y-1">
+      <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
         <p><strong>TST</strong> = Total Sleep Time, <strong>TIB</strong> = Time in Bed, <strong>SE%</strong> = Sleep Efficiency</p>
         <p><strong>SOL</strong> = Sleep Onset Latency, <strong>WASO</strong> = Wake After Sleep Onset, <strong>EMA</strong> = Early Morning Awakening, <strong>TWT</strong> = Total Wake Time</p>
       </div>
