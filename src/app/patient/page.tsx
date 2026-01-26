@@ -62,10 +62,10 @@ export default async function PatientHome() {
       {/* Greeting */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
             {isNewPatient ? `Welcome, ${patient?.name?.split(' ')[0]}!` : `Hello, ${patient?.name?.split(' ')[0]}`}
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="text-slate-600 dark:text-slate-400 mt-1">
             {isNewPatient
               ? "Let's start your sleep therapy journey"
               : hasLoggedToday
@@ -130,66 +130,66 @@ export default async function PatientHome() {
       )}
 
       {/* Sleep prescription */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           Your Sleep Window
         </h2>
         {prescription ? (
           <div className="flex items-center justify-center gap-6">
             <div className="text-center">
-              <p className="text-3xl font-bold text-slate-900">{prescription.bedtime?.slice(0, 5)}</p>
-              <p className="text-sm text-slate-500 mt-1">Bedtime</p>
+              <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{prescription.bedtime?.slice(0, 5)}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Bedtime</p>
             </div>
-            <div className="w-12 h-0.5 bg-slate-200"></div>
+            <div className="w-12 h-0.5 bg-slate-200 dark:bg-slate-700"></div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-slate-900">{prescription.wake_time?.slice(0, 5)}</p>
-              <p className="text-sm text-slate-500 mt-1">Wake time</p>
+              <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{prescription.wake_time?.slice(0, 5)}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Wake time</p>
             </div>
           </div>
         ) : (
           <div className="text-center py-4">
-            <p className="text-slate-500">No prescription set yet</p>
-            <p className="text-sm text-slate-400 mt-1">Your therapist will set this after baseline</p>
+            <p className="text-slate-500 dark:text-slate-400">No prescription set yet</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Your therapist will set this after baseline</p>
           </div>
         )}
       </div>
 
       {/* This week's stats */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           This Week
         </h2>
         {isNewPatient ? (
           <div className="text-center py-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3">
               <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <p className="text-slate-500">No data yet</p>
-            <p className="text-sm text-slate-400 mt-1">Log your sleep to see your stats</p>
+            <p className="text-slate-500 dark:text-slate-400">No data yet</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Log your sleep to see your stats</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="text-center p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+              <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
                 {avgSE !== null ? `${avgSE}%` : '--'}
               </p>
-              <p className="text-sm text-slate-500 mt-1">Avg Sleep Efficiency</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Avg Sleep Efficiency</p>
             </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-slate-900">
+            <div className="text-center p-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
+              <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
                 {weekEntries?.length || 0}/7
               </p>
-              <p className="text-sm text-slate-500 mt-1">Days Logged</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Days Logged</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Treatment Timeline */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
-        <h2 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
           Treatment Progress
         </h2>
         <TreatmentTimeline
