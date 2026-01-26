@@ -92,12 +92,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-slate-900">SleepDiary</h1>
-            <p className="text-slate-600 mt-2">Sign in to your account</p>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">SleepDiary</h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-2">Sign in to your account</p>
           </div>
 
           {error && (
@@ -114,7 +114,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Email
               </label>
               <input
@@ -122,14 +122,14 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Password
               </label>
               <input
@@ -137,7 +137,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Enter your password"
               />
             </div>
@@ -155,14 +155,14 @@ export default function LoginPage() {
             <button
               onClick={handleMagicLink}
               disabled={loading}
-              className="w-full py-3 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 focus:ring-4 focus:ring-slate-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:ring-slate-100 dark:focus:ring-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Send magic link
             </button>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-slate-200">
-            <p className="text-sm text-slate-600 text-center">
+          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
               <span>Need an account? </span>
               <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
                 Learn more

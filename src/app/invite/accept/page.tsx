@@ -400,15 +400,15 @@ function AcceptContent() {
 
   // create-account step
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl">🌙</span>
             </div>
-            <h1 className="text-2xl font-semibold text-slate-900">Welcome to Sleep Diary!</h1>
-            <p className="text-slate-600 mt-2">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Welcome to Sleep Diary!</h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-2">
               <span className="font-medium">{invitation?.therapist?.name}</span> has invited you to start your sleep therapy journey.
             </p>
           </div>
@@ -421,19 +421,19 @@ function AcceptContent() {
 
           <form onSubmit={handleCreateAccount} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Email
               </label>
               <input
                 type="email"
                 value={invitation?.email || ''}
                 disabled
-                className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-slate-500"
+                className="w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
               />
             </div>
 
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Your Name
               </label>
               <input
@@ -441,15 +441,15 @@ function AcceptContent() {
                 type="text"
                 value={editedName}
                 onChange={(e) => setEditedName(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Enter your name"
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">This is how your therapist will see you</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">This is how your therapist will see you</p>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Password
               </label>
               <input
@@ -457,16 +457,16 @@ function AcceptContent() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Create a password"
                 minLength={8}
                 required
               />
-              <p className="text-xs text-slate-500 mt-1">Minimum 8 characters</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Minimum 8 characters</p>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 Confirm Password
               </label>
               <input
@@ -474,7 +474,7 @@ function AcceptContent() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Confirm your password"
                 minLength={8}
                 required
@@ -501,8 +501,8 @@ function AcceptContent() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-slate-200 text-center">
-            <p className="text-sm text-slate-600">
+          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 text-center">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Already have an account?{' '}
               <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">
                 Sign in

@@ -129,33 +129,33 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
   return (
     <>
       {/* Account Information */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Account Information</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Account Information</h2>
         </div>
         <div className="p-6 space-y-4">
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Name</p>
-              <p className="font-medium text-slate-900">{patient.name}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Name</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{patient.name}</p>
             </div>
           </div>
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Email</p>
-              <p className="font-medium text-slate-900">{userEmail}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{userEmail}</p>
             </div>
           </div>
-          <div className="flex justify-between items-center py-3 border-b border-slate-100">
+          <div className="flex justify-between items-center py-3 border-b border-slate-100 dark:border-slate-700">
             <div>
-              <p className="text-sm text-slate-500">Timezone</p>
-              <p className="font-medium text-slate-900">{patient.timezone}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Timezone</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{patient.timezone}</p>
             </div>
           </div>
           <div className="flex justify-between items-center py-3">
             <div>
-              <p className="text-sm text-slate-500">Member since</p>
-              <p className="font-medium text-slate-900">{formatDate(patient.created_at)}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Member since</p>
+              <p className="font-medium text-slate-900 dark:text-slate-100">{formatDate(patient.created_at)}</p>
             </div>
           </div>
         </div>
@@ -163,9 +163,9 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
 
       {/* Therapist Connection */}
       {therapist && (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <h2 className="text-lg font-semibold text-slate-900">Your Therapist</h2>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Your Therapist</h2>
           </div>
           <div className="p-6">
             <div className="flex items-center gap-4">
@@ -175,8 +175,8 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                 </span>
               </div>
               <div>
-                <p className="font-medium text-slate-900">{therapist.name}</p>
-                <p className="text-sm text-slate-500">{therapist.email}</p>
+                <p className="font-medium text-slate-900 dark:text-slate-100">{therapist.name}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{therapist.email}</p>
               </div>
             </div>
           </div>
@@ -184,15 +184,15 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
       )}
 
       {/* Notifications */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Notifications</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Notifications</h2>
         </div>
         <div className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <p className="font-medium text-slate-900">Daily sleep diary reminders</p>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="font-medium text-slate-900 dark:text-slate-100">Daily sleep diary reminders</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 Receive a friendly email each morning to remind you to log your sleep
               </p>
             </div>
@@ -218,8 +218,8 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
           {emailReminders && (
             <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
               <div className="flex-1">
-                <p className="font-medium text-slate-900">Reminder time</p>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="font-medium text-slate-900 dark:text-slate-100">Reminder time</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                   When would you like to receive your daily reminder?
                 </p>
               </div>
@@ -234,7 +234,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                   value={reminderTime}
                   onChange={(e) => handleTimeChange(e.target.value)}
                   disabled={savingTime}
-                  className="px-3 py-2 border border-slate-300 rounded-lg text-slate-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  className="px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 >
                   <option value="06:00">6:00 AM</option>
                   <option value="07:00">7:00 AM</option>
@@ -251,9 +251,9 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
       </div>
 
       {/* Data & Privacy */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Data & Privacy</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Data & Privacy</h2>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
@@ -267,7 +267,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
               </p>
             </div>
           </div>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Your data includes sleep logs, questionnaire responses, and progress information.
             This data is only visible to you and your therapist.
           </p>
@@ -275,14 +275,14 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
       </div>
 
       {/* Actions */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900">Account Actions</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Account Actions</h2>
         </div>
         <div className="p-6 space-y-4">
           <button
             onClick={handleLogout}
-            className="w-full py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 transition flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -297,7 +297,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
             >
               Delete Account
             </button>
-            <p className="text-xs text-slate-500 mt-2 text-center">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
               This will permanently delete your account and all associated data.
             </p>
           </div>
@@ -307,7 +307,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6">
             {deleteStep === 1 && (
               <>
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -316,10 +316,10 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 text-center mb-2">Delete Account?</h3>
-                <p className="text-slate-600 text-center mb-6">
+                <p className="text-slate-600 dark:text-slate-400 text-center mb-6">
                   This action cannot be undone. All your data will be permanently deleted, including:
                 </p>
-                <ul className="text-sm text-slate-600 mb-6 space-y-2">
+                <ul className="text-sm text-slate-600 dark:text-slate-400 mb-6 space-y-2">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
                     All sleep diary entries
@@ -340,7 +340,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition"
+                    className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 transition"
                   >
                     Cancel
                   </button>
@@ -357,7 +357,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
             {deleteStep === 2 && (
               <>
                 <h3 className="text-xl font-semibold text-slate-900 text-center mb-2">Final Confirmation</h3>
-                <p className="text-slate-600 text-center mb-6">
+                <p className="text-slate-600 dark:text-slate-400 text-center mb-6">
                   Type <span className="font-mono font-bold text-red-600">DELETE MY ACCOUNT</span> to confirm:
                 </p>
                 {error && (
@@ -370,7 +370,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                   value={deleteConfirmText}
                   onChange={(e) => setDeleteConfirmText(e.target.value)}
                   placeholder="Type here..."
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition mb-6"
+                  className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition mb-6"
                 />
                 <div className="flex gap-3">
                   <button
@@ -379,7 +379,7 @@ export function PatientProfileClient({ patient, therapist, userEmail }: PatientP
                       setDeleteConfirmText('')
                       setError(null)
                     }}
-                    className="flex-1 py-3 px-4 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition"
+                    className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 transition"
                     disabled={deleting}
                   >
                     Back
